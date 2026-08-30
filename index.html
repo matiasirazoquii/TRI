@@ -103,12 +103,12 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
             <div class="muted" style="margin-top:5px">Extracción por OCR y cálculo de IVA e Ingresos Brutos</div>
             <input type="file" id="fileFactura" class="hidden" accept="image/*,.pdf" onchange="processInvoice(this)">
           </div>
-          <div id="ocrStatus" class="muted hidden" style="text-align:center;margin-bottom:15px"><span class="loader"></span> Escaneando y analizando impuestos...</div>
+          <div id="ocrStatus" class="muted hidden" style="text-align:center;margin-bottom:15px"><span class="loader"></span> Escaneando y analizando texto e impuestos...</div>
           
           <div class="form-grid">
-            <div class="field"><label>Proveedor / Cliente</label><input id="facEmisor" class="input" placeholder="Razón social detectada"></div>
+            <div class="field"><label>Proveedor / Cliente (Razón Social)</label><input id="facEmisor" class="input" placeholder="Razón social detectada"></div>
             <div class="field"><label>N° Factura / CUIT</label><input id="facNumero" class="input" placeholder="Ej: A-0001-00001234"></div>
-            <div class="field"><label>Tipo Comprobante</label><select id="facTipo" class="select"><option value="A">Factura A</option><option value="B">Factura B</option><option value="C">Factura C</option></select></div>
+            <div class="field"><label>Tipo Comprobante</label><select id="facTipo" class="select" onchange="calcTaxes()"><option value="A">Factura A</option><option value="B">Factura B</option><option value="C">Factura C</option></select></div>
             <div class="field"><label>Monto Total ($)</label><input id="facTotal" type="number" step="0.01" class="input" placeholder="0.00" oninput="calcTaxes()"></div>
           </div>
 
@@ -287,7 +287,6 @@ function render(){
  document.getElementById("dashFacturas").textContent = money(totalFacturado);
  document.getElementById("dashIva").textContent = money(totalIva);
 
- // Render Cheques
  const upcoming=allCheques.filter(c=>c.status==='pending'&&daysUntil(c.fecha)<=7&&daysUntil(c.fecha)>=0).sort((a,b)=>a.fecha.localeCompare(b.fecha));
  document.getElementById("dashboardList").innerHTML=upcoming.slice(0,5).map(chequeCard).join("")||'<div class="card empty">No hay cheques próximos a vencer.</div>';
 
@@ -301,7 +300,6 @@ function render(){
 
  document.getElementById("reminderList").innerHTML=allCheques.filter(c=>c.status==='pending').sort((a,b)=>a.fecha.localeCompare(b.fecha)).map(chequeCard).join("")||'<div class="card empty">No hay pagos o cobros pendientes.</div>';
 
- // Render Facturas List
  document.getElementById("facturasList").innerHTML = allFacturas.map(f=>`
    <div class="cheque-item">
      <div class="cheque-icon">🧾</div>
@@ -311,7 +309,6 @@ function render(){
    </div>
  `).join("") || '<div class="card empty">No hay facturas cargadas.</div>';
 
- // Render Stats
  const neto = totalFacturado / 1.21;
  document.getElementById("stTotalFac").textContent = money(totalFacturado);
  document.getElementById("stNetoFac").textContent = money(neto);
@@ -334,7 +331,7 @@ function saveCheque(){
  ["fBeneficiario","fNumero","fFecha","fImporte","fObs"].forEach(id=>document.getElementById(id).value="");document.getElementById("fBanco").value="";showView("dashboard");
 }
 
-/* FUNCIONALIDAD OCR FACTURAS AFIP */
+/* FUNCIONALIDAD OCR Y PATRONES AFIP AVANZADO */
 async function processInvoice(input){
   const file = input.files[0];
   if(!file) return;
@@ -349,7 +346,7 @@ async function processInvoice(input){
       for(let i=1; i<=pdf.numPages; i++){
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
-        text += content.items.map(s => s.str).join(" ") + " ";
+        text += content.items.map(s => s.str).join(" ") + "\n";
       }
     } else {
       const result = await Tesseract.recognize(file, 'spa');
@@ -357,28 +354,68 @@ async function processInvoice(input){
     }
     parseInvoiceText(text);
   } catch(e) {
-    alert("Error procesando el archivo. Intente ingresando los valores manualmente.");
+    alert("Hubo un error al leer el archivo. Podes ingresar los datos manualmente.");
   } finally {
     status.classList.add("hidden");
   }
 }
 
 function parseInvoiceText(txt){
-  // Auto-detectar tipo A, B, C
-  if(txt.includes("FACTURA A") || txt.match(/Cod\.\s*01/)) document.getElementById("facTipo").value = "A";
-  else if(txt.includes("FACTURA B")) document.getElementById("facTipo").value = "B";
-  else if(txt.includes("FACTURA C")) document.getElementById("facTipo").value = "C";
+  // 1. Detección de Tipo de Factura A, B, C
+  if(txt.match(/FACTURA\s*A/i) || txt.match(/COD\.\s*0*1\b/i)) document.getElementById("facTipo").value = "A";
+  else if(txt.match(/FACTURA\s*B/i) || txt.match(/COD\.\s*0*6\b/i)) document.getElementById("facTipo").value = "B";
+  else if(txt.match(/FACTURA\s*C/i) || txt.match(/COD\.\s*11\b/i)) document.getElementById("facTipo").value = "C";
 
-  // Buscar Total ($ XXX.XX)
-  const totalMatch = txt.match(/TOTAL\s*\$?\s*([\d\.\,]+)/i) || txt.match(/Importe Total\s*\$?\s*([\d\.\,]+)/i);
-  if(totalMatch){
-    let raw = totalMatch[1].replace(/\./g, "").replace(",", ".");
-    document.getElementById("facTotal").value = parseFloat(raw) || 0;
+  // 2. Extracción de Razón Social / Emisor
+  let emisor = "";
+  const emisorMatch = txt.match(/(?:Raz[oó]n Social|Nombre y Apellido|Empresa|Emisor)[:\s]+([^\n\r]+)/i) || 
+                      txt.match(/([A-Z0-9\s\.]{4,35})\s+(?:S\.A\.|S\.R\.L\.|SAS|SH)/i);
+  if(emisorMatch && emisorMatch[1]){
+    emisor = emisorMatch[1].trim();
+  } else {
+    // Si no encuentra por etiqueta, toma las primeras líneas significativas
+    const lines = txt.split('\n').map(l=>l.trim()).filter(l=>l.length>3 && !l.toLowerCase().includes("factura") && !l.toLowerCase().includes("afip"));
+    if(lines.length>0) emisor = lines[0];
+  }
+  if(emisor) document.getElementById("facEmisor").value = emisor;
+
+  // 3. Extracción N° Factura / CUIT
+  const cuitMatch = txt.match(/CUIT[:\s]*([\d\-]{11,13})/i);
+  const numMatch = txt.match(/(?:Comp\.?\s*Nº|Comprobante|Nº)[:\s]*([\d\-]+)/i);
+  if(cuitMatch) {
+    document.getElementById("facNumero").value = (numMatch ? numMatch[1] + " - " : "") + "CUIT: " + cuitMatch[1];
+  } else if(numMatch) {
+    document.getElementById("facNumero").value = numMatch[1];
   }
 
-  // Buscar CUIT o Emisor elemental
-  const cuitMatch = txt.match(/CUIT[:\s]*([\d\-]+)/i);
-  if(cuitMatch) document.getElementById("facNumero").value = "CUIT: " + cuitMatch[1];
+  // 4. Extracción de Monto Total
+  let montoEncontrado = 0;
+  const patronesTotal = [
+    /(?:TOTAL|Importe Total|Total \$)\s*[:\$]?\s*([\d\.\,]+)/i,
+    /TOTAL\s*[:\$]?\s*([\d\.\,]+)/i,
+    /\$\s*([\d\.\,]{3,})/i
+  ];
+
+  for(let pat of patronesTotal){
+    const match = txt.match(pat);
+    if(match && match[1]){
+      let strVal = match[1].trim();
+      // Limpiar formato de miles y decimales
+      if(strVal.includes(",") && strVal.includes(".")){
+        strVal = strVal.replace(/\./g, "").replace(",", ".");
+      } else if(strVal.includes(",")){
+        strVal = strVal.replace(",", ".");
+      }
+      let val = parseFloat(strVal);
+      if(!isNaN(val) && val > montoEncontrado){
+        montoEncontrado = val;
+      }
+    }
+  }
+
+  if(montoEncontrado > 0){
+    document.getElementById("facTotal").value = montoEncontrado;
+  }
 
   calcTaxes();
 }
@@ -392,7 +429,7 @@ function calcTaxes(){
     neto = total / 1.21;
     iva = total - neto;
   }
-  iibb = neto * 0.035; // Est. Promedio Responsable Inscripto
+  iibb = neto * 0.035;
 
   document.getElementById("taxNeto").textContent = money(neto);
   document.getElementById("taxIva").textContent = money(iva);
@@ -450,5 +487,3 @@ if(localStorage.getItem("chekcontrol_logged")==="1"){document.getElementById("lo
 </script>
 </body>
 </html>
-
-```
