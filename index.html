@@ -460,95 +460,125 @@ async function extractTextFromPDF(file){
 }
 
 function parseInvoiceText(text){
- const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
- 
- const myKeywords = [
-   "rodrigo irazoqui", 
-   "irazoqui", 
-   "tri transporte", 
-   "transporte rodrigo",
-   "irazoqui rodrigo david",
-   "rodrigo david",
-   "eduardo marquina"
- ];
- const myCuits = ["20335347391", "20345678909", "27345678909"];
+  const cleanText = text.replace(/\r/g, '').replace(/[ \t]+/g, ' ');
+  const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  
+  const myKeywords = [
+    "rodrigo irazoqui", "irazoqui", "tri transporte", 
+    "transporte rodrigo", "irazoqui rodrigo david", "rodrigo david"
+  ];
+  const myCuits = ["20335347391", "20345678909", "27345678909"];
 
- function isMyInfo(str){
-   const l = str.toLowerCase();
-   return myKeywords.some(k => l.includes(k)) || myCuits.some(c => str.includes(c));
- }
+  function isMyInfo(str){
+    const l = str.toLowerCase();
+    return myKeywords.some(k => l.includes(k)) || myCuits.some(c => str.includes(c));
+  }
 
- // --- 1. EXTRACCIÓN DEL EMISOR ---
- let emisor = "";
+  // --- 1. EXTRACCIÓN DEL EMISOR ---
+  let emisor = "";
 
- for(let line of lines){
-   if(isMyInfo(line)) continue;
-   if(/\b(s\.?r\.?l\.?|s\.?a\.?|s\.?a\.?s\.?|sh|s\.?h\.?)\b/i.test(line)){
-     emisor = line.replace(/^(raz[oó]n\s+social|emisor|nombre):?/i, '').trim();
-     break;
-   }
- }
+  const emisorMatch = cleanText.match(/(?:Razón Social|Emisor|Apellido y Nombre|Nombre)\s*:\s*([^:\n]+)/i);
+  if (emisorMatch && !isMyInfo(emisorMatch[1])) {
+    emisor = emisorMatch[1].trim();
+  }
 
- if(!emisor){
-   const ignored = [
-     "factura", "comprobante", "original", "duplicado", "cuit", "fecha", 
-     "ingresos brutos", "cod", "codigo", "responsable inscripto",
-     "domicilio", "ubicacion", "condicion de venta", "pagina", "pag", "tel"
-   ];
-   for(let i = 0; i < Math.min(lines.length, 10); i++){
-     const l = lines[i];
-     const low = l.toLowerCase();
-     if(isMyInfo(l)) continue;
-     if(ignored.some(r => low.includes(r))) continue;
-     if(l.length >= 3 && !/^\d+$/.test(l)){
-       emisor = l;
-       break;
-     }
-   }
- }
+  if (!emisor) {
+    for (let line of lines) {
+      if (isMyInfo(line)) continue;
+      if (/\b(S\.?R\.?L\.?|S\.?A\.?|S\.?A\.?S\.?|S\.?H\.?|SH|SOCIEDAD ANONIMA|SOCIEDAD DE RESPONSABILIDAD LIMITADA)\b/i.test(line)) {
+        emisor = line.replace(/^(raz[oó]n\s+social|emisor|nombre|condici[oó]n|domicilio):?/i, '').trim();
+        break;
+      }
+    }
+  }
 
- // --- 2. EXTRACCIÓN DEL MONTO TOTAL ---
- let total = 0;
+  if (!emisor) {
+    const blackList = [
+      "factura", "comprobante", "original", "duplicado", "triplicado", 
+      "cuit", "fecha", "ingresos brutos", "codigo", "cod", "punto de venta",
+      "condicion", "iva", "responsable", "monotributo", "exento", "hoja", "pagina"
+    ];
+    for (let i = 0; i < Math.min(lines.length, 12); i++) {
+      const l = lines[i];
+      const low = l.toLowerCase();
+      if (isMyInfo(l)) continue;
+      if (blackList.some(k => low.includes(k))) continue;
+      if (l.length >= 3 && !/^\d+$/.test(l)) {
+        emisor = l;
+        break;
+      }
+    }
+  }
 
- const totalMatch = text.match(/Importe\s+Total\s*:\s*\$?\s*([\d\.\,]+)/i) || 
-                    text.match(/Total\s*:\s*\$?\s*([\d\.\,]+)/i);
+  // --- 2. EXTRACCIÓN DEL DETALLE DE LA FACTURA ---
+  let detalle = "";
 
- if(totalMatch && totalMatch[1]){
-   let rawVal = totalMatch[1].trim();
-   if(rawVal.includes('.') && rawVal.includes(',')){
-     rawVal = rawVal.replace(/\./g, '').replace(',', '.');
-   } else if(rawVal.includes(',')){
-     rawVal = rawVal.replace(',', '.');
-   }
-   total = parseFloat(rawVal);
- }
+  const startRegex = /(?:c[oó]digo|concepto|descripci[oó]n|producto\/servicio|cant\.|cantidad)/i;
+  const endRegex = /(?:subtotal|importe total|otros tributos|resumen|bonificaci[oó]n|imp. neto)/i;
 
- if(!total || isNaN(total)){
-   const amounts = text.match(/\$\s*[\d\.]+(?:,\d{2})?/g);
-   if(amounts){
-     const parsedAmounts = amounts.map(a => {
-       let clean = a.replace(/[\$\s]/g, '');
-       if(clean.includes('.') && clean.includes(',')) clean = clean.replace(/\./g, '').replace(',', '.');
-       else if(clean.includes(',')) clean = clean.replace(',', '.');
-       return parseFloat(clean);
-     }).filter(n => !isNaN(n));
-     if(parsedAmounts.length > 0) total = Math.max(...parsedAmounts);
-   }
- }
+  let startIndex = -1;
+  let endIndex = -1;
 
- // --- 3. EXTRACCIÓN DE COMPROBANTE Y TIPO ---
- const numMatch = text.match(/(\d{4,5}-\d{8})/);
- const numero = numMatch ? numMatch[1] : "N/A";
+  for (let i = 0; i < lines.length; i++) {
+    if (startIndex === -1 && startRegex.test(lines[i])) {
+      startIndex = i + 1;
+      continue;
+    }
+    if (startIndex !== -1 && endRegex.test(lines[i])) {
+      endIndex = i;
+      break;
+    }
+  }
 
- const tipoMatch = text.match(/\bFACTURA\b[\s\S]*?\b([ABC])\b/i) || text.match(/\b([ABC])\b\s+Cod/i);
- const tipo = tipoMatch ? tipoMatch[1].toUpperCase() : "A";
+  if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
+    detalle = lines.slice(startIndex, endIndex)
+      .filter(l => !/^(subtotal|iva|neto|total|impuestos)/i.test(l))
+      .join('\n');
+  } else if (startIndex !== -1 && endIndex === -1) {
+    detalle = lines.slice(startIndex, startIndex + 5).join('\n');
+  }
 
- document.getElementById("facEmisor").value = emisor || "Emisor no detectado";
- document.getElementById("facNumero").value = numero;
- document.getElementById("facTipo").value = tipo;
- document.getElementById("facTotal").value = total > 0 ? total.toFixed(2) : "";
+  // --- 3. EXTRACCIÓN DEL MONTO TOTAL ---
+  let total = 0;
+  const totalMatch = cleanText.match(/(?:Importe\s+Total|Total\s+Comprobante|Total)\s*:\s*\$?\s*([\d\.\,]+)/i);
 
- calcTaxes();
+  if (totalMatch && totalMatch[1]) {
+    let rawVal = totalMatch[1].trim();
+    if (rawVal.includes('.') && rawVal.includes(',')) {
+      rawVal = rawVal.replace(/\./g, '').replace(',', '.');
+    } else if (rawVal.includes(',')) {
+      rawVal = rawVal.replace(',', '.');
+    }
+    total = parseFloat(rawVal);
+  }
+
+  if (!total || isNaN(total)) {
+    const amounts = cleanText.match(/\$\s*[\d\.]+(?:,\d{2})?/g);
+    if (amounts) {
+      const parsedAmounts = amounts.map(a => {
+        let clean = a.replace(/[\$\s]/g, '');
+        if (clean.includes('.') && clean.includes(',')) clean = clean.replace(/\./g, '').replace(',', '.');
+        else if (clean.includes(',')) clean = clean.replace(',', '.');
+        return parseFloat(clean);
+      }).filter(n => !isNaN(n));
+      if (parsedAmounts.length > 0) total = Math.max(...parsedAmounts);
+    }
+  }
+
+  // --- 4. EXTRACCIÓN DEL NÚMERO Y TIPO DE COMPROBANTE ---
+  const numMatch = cleanText.match(/(\d{4,5}\s*-\s*\d{8})/);
+  const numero = numMatch ? numMatch[1].replace(/\s+/g, '') : "N/A";
+
+  const tipoMatch = cleanText.match(/\bFACTURA\b[\s\S]*?\b([ABC])\b/i) || cleanText.match(/\b([ABC])\b\s+Cod/i);
+  const tipo = tipoMatch ? tipoMatch[1].toUpperCase() : "A";
+
+  document.getElementById("facEmisor").value = emisor || "Emisor no detectado";
+  document.getElementById("facNumero").value = numero;
+  document.getElementById("facTipo").value = tipo;
+  document.getElementById("facTotal").value = total > 0 ? total.toFixed(2) : "";
+  document.getElementById("facDetalle").value = detalle ? detalle.trim() : "Detalle no detectado automáticamente.";
+
+  calcTaxes();
 }
 
 if(localStorage.getItem("chekcontrol_logged")==="1"){
