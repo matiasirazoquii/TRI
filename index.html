@@ -106,10 +106,11 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
           <div id="ocrStatus" class="muted hidden" style="text-align:center;margin-bottom:15px"><span class="loader"></span> Escaneando y analizando texto e impuestos...</div>
           
           <div class="form-grid">
-            <div class="field"><label>Proveedor / Cliente (Razón Social)</label><input id="facEmisor" class="input" placeholder="Razón social detectada"></div>
-            <div class="field"><label>N° Factura / CUIT</label><input id="facNumero" class="input" placeholder="Ej: A-0001-00001234"></div>
+            <div class="field"><label>Emisor / Proveedor (Quien vendió)</label><input id="facEmisor" class="input" placeholder="Razón social detectada"></div>
+            <div class="field"><label>N° Factura / CUIT Emisor</label><input id="facNumero" class="input" placeholder="Ej: A-0001-00001234"></div>
             <div class="field"><label>Tipo Comprobante</label><select id="facTipo" class="select" onchange="calcTaxes()"><option value="A">Factura A</option><option value="B">Factura B</option><option value="C">Factura C</option></select></div>
             <div class="field"><label>Monto Total ($)</label><input id="facTotal" type="number" step="0.01" class="input" placeholder="0.00" oninput="calcTaxes()"></div>
+            <div class="field full"><label>Detalle de los Artículos / Servicios Comprados</label><textarea id="facDetalle" class="textarea" placeholder="Descripción de los artículos o productos comprados..."></textarea></div>
           </div>
 
           <div class="tax-card">
@@ -243,6 +244,7 @@ function dateObj(s){return new Date(s+"T00:00:00")}
 function fmtDate(s){return dateObj(s).toLocaleDateString("es-AR",{day:"2-digit",month:"short",year:"numeric"})}
 function daysUntil(s){return Math.ceil((dateObj(s)-new Date(new Date().toDateString()))/86400000)}
 function effectiveStatus(c){if(c.status==="paid")return"paid"; return daysUntil(c.fecha)<0?"expired":"pending"}
+function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 function login(){
  const u=document.getElementById("username").value.trim(),p=document.getElementById("password").value;
@@ -303,9 +305,12 @@ function render(){
  document.getElementById("facturasList").innerHTML = allFacturas.map(f=>`
    <div class="cheque-item">
      <div class="cheque-icon">🧾</div>
-     <div><b>${esc(f.emisor)}</b> <span class="status paid">Factura ${f.tipo}</span><div class="muted">N° ${esc(f.numero)}</div></div>
+     <div><b>${esc(f.emisor)}</b> <span class="status paid">Factura ${f.tipo}</span><div class="muted">N° ${esc(f.numero)} ${f.detalle ? '· <i>' + esc(f.detalle).substring(0,35) + '...</i>' : ''}</div></div>
      <div class="cheque-date"><div class="amount green">${money(f.total)}</div><div class="muted">IVA 21%: ${money(f.total - (f.total/1.21))}</div></div>
-     <button class="btn" onclick="deleteFactura(${f.id})">🗑️</button>
+     <div style="display:flex;gap:6px;">
+       <button class="btn" onclick="openFacturaDetail(${f.id})">👁️</button>
+       <button class="btn" onclick="deleteFactura(${f.id})">🗑️</button>
+     </div>
    </div>
  `).join("") || '<div class="card empty">No hay facturas cargadas.</div>';
 
@@ -331,6 +336,94 @@ function saveCheque(){
  ["fBeneficiario","fNumero","fFecha","fImporte","fObs"].forEach(id=>document.getElementById(id).value="");document.getElementById("fBanco").value="";showView("dashboard");
 }
 
+function calcTaxes(){
+ const total = parseFloat(document.getElementById("facTotal").value) || 0;
+ const tipo = document.getElementById("facTipo").value;
+ let neto = total, iva = 0;
+ if(tipo === "A" || tipo === "B"){
+   neto = total / 1.21;
+   iva = total - neto;
+ }
+ const iibb = neto * 0.035;
+ document.getElementById("taxNeto").textContent = money(neto);
+ document.getElementById("taxIva").textContent = money(iva);
+ document.getElementById("taxIibb").textContent = money(iibb);
+ document.getElementById("taxTotalDisplay").textContent = money(total);
+}
+
+function saveInvoice(){
+ const emisor = document.getElementById("facEmisor").value.trim();
+ const numero = document.getElementById("facNumero").value.trim();
+ const tipo = document.getElementById("facTipo").value;
+ const total = parseFloat(document.getElementById("facTotal").value);
+ const detalle = document.getElementById("facDetalle").value.trim();
+ 
+ if(!emisor || !numero || isNaN(total) || total <= 0){
+   alert("Por favor completa la razón social, número de comprobante y monto válido.");
+   return;
+ }
+ 
+ window.facturas.push({ id: Date.now(), emisor, numero, tipo, total, detalle });
+ if(window.saveStore) window.saveStore();
+ 
+ document.getElementById("facEmisor").value = "";
+ document.getElementById("facNumero").value = "";
+ document.getElementById("facTotal").value = "";
+ document.getElementById("facDetalle").value = "";
+ calcTaxes();
+ alert("Factura guardada correctamente.");
+ render();
+}
+
+function deleteFactura(id){
+ if(confirm("¿Estás seguro de eliminar esta factura?")){
+   window.facturas = window.facturas.filter(f => f.id !== id);
+   if(window.saveStore) window.saveStore();
+   render();
+ }
+}
+
+function openFacturaDetail(id){
+ const f = window.facturas.find(x => x.id === id);
+ if(!f) return;
+ const neto = f.total / 1.21;
+ const iva = f.total - neto;
+ document.getElementById("detailContent").innerHTML = `
+   <div class="detail-grid">
+     <div class="detail-row"><span>Tipo Comprobante:</span><b>Factura ${f.tipo}</b></div>
+     <div class="detail-row"><span>Emisor / Proveedor:</span><b>${esc(f.emisor)}</b></div>
+     <div class="detail-row"><span>N° / CUIT:</span><b>${esc(f.numero)}</b></div>
+     <div class="detail-row"><span>Neto Gravado:</span><b>${money(neto)}</b></div>
+     <div class="detail-row"><span>IVA (21%):</span><b>${money(iva)}</b></div>
+     <div class="detail-row"><span>Total:</span><b class="green">${money(f.total)}</b></div>
+   </div>
+   <div style="margin-top:15px">
+     <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:5px">Detalle de la Compra:</label>
+     <div style="background:#15151b;padding:12px;border-radius:10px;border:1px solid #2a2732;white-space:pre-wrap;font-size:13px">${esc(f.detalle || "Sin detalle registrado.")}</div>
+   </div>
+ `;
+ document.getElementById("detailModal").classList.remove("hidden");
+}
+
+function openDetail(id){
+ const c = window.cheques.find(x => x.id === id);
+ if(!c) return;
+ document.getElementById("detailContent").innerHTML = `
+   <div class="detail-grid">
+     <div class="detail-row"><span>Tipo:</span><b>${c.tipoOp==='cobrar'?'A Cobrar':'Emitido'}</b></div>
+     <div class="detail-row"><span>Librador/Beneficiario:</span><b>${esc(c.beneficiario)}</b></div>
+     <div class="detail-row"><span>Banco:</span><b>${esc(c.banco)}</b></div>
+     <div class="detail-row"><span>Número:</span><b>${esc(c.numero)}</b></div>
+     <div class="detail-row"><span>Fecha Vencimiento:</span><b>${fmtDate(c.fecha)}</b></div>
+     <div class="detail-row"><span>Importe:</span><b>${money(c.importe)}</b></div>
+     <div class="detail-row"><span>Observaciones:</span><b>${esc(c.obs||'-')}</b></div>
+   </div>
+ `;
+ document.getElementById("detailModal").classList.remove("hidden");
+}
+
+function closeModal(){ document.getElementById("detailModal").classList.add("hidden"); }
+
 /* FUNCIONALIDAD OCR Y PATRONES AFIP AVANZADO */
 async function processInvoice(input){
   const file = input.files[0];
@@ -354,7 +447,7 @@ async function processInvoice(input){
     }
     parseInvoiceText(text);
   } catch(e) {
-    alert("Hubo un error al leer el archivo. Podes ingresar los datos manualmente.");
+    alert("Hubo un error al leer el archivo. Podés ingresar los datos manualmente.");
   } finally {
     status.classList.add("hidden");
   }
@@ -366,24 +459,41 @@ function parseInvoiceText(txt){
   else if(txt.match(/FACTURA\s*B/i) || txt.match(/COD\.\s*0*6\b/i)) document.getElementById("facTipo").value = "B";
   else if(txt.match(/FACTURA\s*C/i) || txt.match(/COD\.\s*11\b/i)) document.getElementById("facTipo").value = "C";
 
-  // 2. Extracción de Razón Social / Emisor
+  // 2. Extracción de Razón Social del EMISOR (Ignora datos del Receptor/Usuario Rodrigo Irazoqui)
   let emisor = "";
-  const emisorMatch = txt.match(/(?:Raz[oó]n Social|Nombre y Apellido|Empresa|Emisor)[:\s]+([^\n\r]+)/i) || 
-                      txt.match(/([A-Z0-9\s\.]{4,35})\s+(?:S\.A\.|S\.R\.L\.|SAS|SH)/i);
+  const lines = txt.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  
+  // Buscar etiquetas típicas del emisor (Vendedor)
+  const emisorMatch = txt.match(/(?:Razón Social|Razon Social|Nombre y Apellido|Vendedor)[:\s]+([^\n\r]+)/i);
   if(emisorMatch && emisorMatch[1]){
-    emisor = emisorMatch[1].trim();
-  } else {
-    // Si no encuentra por etiqueta, toma las primeras líneas significativas
-    const lines = txt.split('\n').map(l=>l.trim()).filter(l=>l.length>3 && !l.toLowerCase().includes("factura") && !l.toLowerCase().includes("afip"));
-    if(lines.length>0) emisor = lines[0];
+    let temp = emisorMatch[1].trim();
+    if(!temp.toLowerCase().includes("rodrigo") && !temp.toLowerCase().includes("irazoqui")){
+      emisor = temp;
+    }
+  }
+
+  // Si no se halló por etiqueta, buscar las líneas iniciales de la factura omitiendo la empresa propia
+  if(!emisor){
+    for(let line of lines){
+      const lLower = line.toLowerCase();
+      if(lLower.includes("rodrigo") || lLower.includes("irazoqui") || lLower.includes("factura") || lLower.includes("afip") || lLower.includes("comprobante") || lLower.includes("original") || lLower.includes("copia")) continue;
+      if(line.length > 3 && !/^\d+$/.test(line)){
+        emisor = line;
+        break;
+      }
+    }
   }
   if(emisor) document.getElementById("facEmisor").value = emisor;
 
-  // 3. Extracción N° Factura / CUIT
-  const cuitMatch = txt.match(/CUIT[:\s]*([\d\-]{11,13})/i);
-  const numMatch = txt.match(/(?:Comp\.?\s*Nº|Comprobante|Nº)[:\s]*([\d\-]+)/i);
-  if(cuitMatch) {
-    document.getElementById("facNumero").value = (numMatch ? numMatch[1] + " - " : "") + "CUIT: " + cuitMatch[1];
+  // 3. Extracción N° Factura / CUIT del Emisor
+  // Capturar todos los CUITs en el documento
+  const allCuits = [...txt.matchAll(/(?:CUIT[:\s]*)?([\d]{2}-[\d]{8}-[\d]{1})/gi)].map(m => m[1]);
+  // Filtrar CUITs para tomar el del emisor (priorizando el primero si difieren del propio)
+  let cuitEmisor = allCuits.length > 0 ? allCuits[0] : "";
+
+  const numMatch = txt.match(/(?:Comp\.?\s*Nº|Comprobante|Nº|Punto de Venta)[:\s]*([\d\-]+)/i);
+  if(cuitEmisor) {
+    document.getElementById("facNumero").value = (numMatch ? numMatch[1] + " - " : "") + "CUIT: " + cuitEmisor;
   } else if(numMatch) {
     document.getElementById("facNumero").value = numMatch[1];
   }
@@ -392,98 +502,66 @@ function parseInvoiceText(txt){
   let montoEncontrado = 0;
   const patronesTotal = [
     /(?:TOTAL|Importe Total|Total \$)\s*[:\$]?\s*([\d\.\,]+)/i,
-    /TOTAL\s*[:\$]?\s*([\d\.\,]+)/i,
-    /\$\s*([\d\.\,]{3,})/i
+    /\$\s*([\d\.\,]+)/g
   ];
 
-  for(let pat of patronesTotal){
-    const match = txt.match(pat);
-    if(match && match[1]){
-      let strVal = match[1].trim();
-      // Limpiar formato de miles y decimales
-      if(strVal.includes(",") && strVal.includes(".")){
-        strVal = strVal.replace(/\./g, "").replace(",", ".");
-      } else if(strVal.includes(",")){
-        strVal = strVal.replace(",", ".");
-      }
-      let val = parseFloat(strVal);
-      if(!isNaN(val) && val > montoEncontrado){
-        montoEncontrado = val;
-      }
+  const matchTotal = txt.match(patronesTotal[0]);
+  if(matchTotal){
+    let raw = matchTotal[1].replace(/\./g, '').replace(',', '.');
+    montoEncontrado = parseFloat(raw);
+  } else {
+    // Si no encuentra etiqueta TOTAL exacta, busca el valor numérico con formato de moneda más alto
+    const importes = [];
+    let match;
+    const re = /\$\s*([\d\.\,]+)/g;
+    while ((match = re.exec(txt)) !== null) {
+      let val = parseFloat(match[1].replace(/\./g, '').replace(',', '.'));
+      if(!isNaN(val)) importes.push(val);
     }
+    if(importes.length > 0) montoEncontrado = Math.max(...importes);
   }
 
   if(montoEncontrado > 0){
     document.getElementById("facTotal").value = montoEncontrado;
+    calcTaxes();
   }
 
-  calcTaxes();
-}
+  // 5. Extracción del Detalle de Productos / Servicios Comprados
+  let detalleLineas = [];
+  let capturandoDetalle = false;
 
-function calcTaxes(){
-  const total = parseFloat(document.getElementById("facTotal").value) || 0;
-  const tipo = document.getElementById("facTipo").value;
-  let neto = total, iva = 0, iibb = 0;
+  for(let line of lines){
+    const lLower = line.toLowerCase();
+    
+    // Iniciar captura tras pasar los encabezados de tabla comunes en AFIP
+    if(lLower.includes("código") || lLower.includes("descripcion") || lLower.includes("descripción") || lLower.includes("producto / servicio") || lLower.includes("cantidad")){
+      capturandoDetalle = true;
+      continue;
+    }
+    
+    // Detener la captura al llegar al bloque del resumen fiscal o totales
+    if(lLower.includes("subtotal") || lLower.includes("importe total") || lLower.includes("otros tributos") || lLower.includes("cae") || lLower.includes("pagador")){
+      capturandoDetalle = false;
+    }
 
-  if(tipo === "A" || tipo === "B"){
-    neto = total / 1.21;
-    iva = total - neto;
+    if(capturandoDetalle){
+      // Evitar guardar líneas vacías o de estructura de página
+      if(line.length > 3 && !lLower.includes("unidad de medida") && !lLower.includes("precio unit")){
+        detalleLineas.push(line);
+      }
+    }
   }
-  iibb = neto * 0.035;
 
-  document.getElementById("taxNeto").textContent = money(neto);
-  document.getElementById("taxIva").textContent = money(iva);
-  document.getElementById("taxIibb").textContent = money(iibb);
-  document.getElementById("taxTotalDisplay").textContent = money(total);
-}
-
-function saveInvoice(){
-  const emisor = document.getElementById("facEmisor").value.trim() || "Proveedor General";
-  const num = document.getElementById("facNumero").value.trim() || "S/N";
-  const tipo = document.getElementById("facTipo").value;
-  const total = parseFloat(document.getElementById("facTotal").value) || 0;
-
-  if(!total){alert("Ingrese un monto total válido.");return}
-
-  window.facturas.push({id: Date.now(), emisor, numero: num, tipo, total, fecha: new Date().toISOString().split("T")[0]});
-  if(window.saveStore) window.saveStore();
-  
-  document.getElementById("facEmisor").value = "";
-  document.getElementById("facNumero").value = "";
-  document.getElementById("facTotal").value = "";
-  calcTaxes();
-  render();
-  alert("Factura registrada exitosamente.");
-}
-
-function deleteFactura(id){
-  if(confirm("¿Desea eliminar esta factura?")){
-    window.facturas = window.facturas.filter(x => x.id !== id);
-    if(window.saveStore) window.saveStore();
-    render();
+  if(detalleLineas.length > 0){
+    document.getElementById("facDetalle").value = detalleLineas.join("\n");
+  } else {
+    // Intento secundario: Si no halló encabezado de tabla, capturar frases extensas o posibles conceptos
+    const lineasConcepto = lines.filter(l => l.length > 15 && !l.toLowerCase().includes("transporte") && !l.toLowerCase().includes("afip") && !l.toLowerCase().includes("cuit") && !l.toLowerCase().includes("domicilio"));
+    if(lineasConcepto.length > 0){
+      document.getElementById("facDetalle").value = lineasConcepto.slice(0, 5).join("\n");
+    }
   }
 }
-
-function openDetail(id){
- const c=window.cheques.find(x=>x.id===id);if(!c)return;
- const st=effectiveStatus(c);
- document.getElementById("detailContent").innerHTML=`<div class="card" style="margin-top:20px;background:#0c0c11">
- <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:18px">${esc(c.beneficiario)}</b><span class="status ${st}">${st==="paid"?"Completado":"Pendiente"}</span></div>
- <div class="detail-grid" style="margin-top:14px">
- <div class="detail-row"><span>Tipo</span><b>${c.tipoOp==='cobrar'?'📥 A Cobrar':'📤 Emitido'}</b></div><div class="detail-row"><span>Banco</span><b>${esc(c.banco)}</b></div>
- <div class="detail-row"><span>Número</span><b>${esc(c.numero)}</b></div><div class="detail-row"><span>Vencimiento</span><b>${fmtDate(c.fecha)}</b></div>
- <div class="detail-row"><span>Importe</span><b>${money(c.importe)}</b></div>
- </div><div class="detail-row"><span>Observaciones</span><b>${esc(c.obs||"Sin observaciones")}</b></div>
- <div style="display:flex;gap:8px;margin-top:18px">${st!=="paid"?`<button class="btn btn-purple" onclick="markPaid(${c.id})">✓ Marcar como ${c.tipoOp==='cobrar'?'Cobrado':'Pagado'}</button>`:""}<button class="btn" onclick="deleteCheque(${c.id})">Eliminar</button></div>
- </div>`;
- document.getElementById("detailModal").classList.remove("hidden");
-}
-function closeModal(){document.getElementById("detailModal").classList.add("hidden")}
-function markPaid(id){const c=window.cheques.find(x=>x.id===id);if(c){c.status="paid";if(window.saveStore)window.saveStore();closeModal();render()}}
-function deleteCheque(id){if(confirm("¿Eliminar este cheque?")){window.cheques=window.cheques.filter(x=>x.id!==id);if(window.saveStore)window.saveStore();closeModal();render()}}
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-
-if(localStorage.getItem("chekcontrol_logged")==="1"){document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden");render()}
 </script>
 </body>
 </html>
