@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#09090d">
+<title>ChekControl — Gestión de cheques</title>
+<style>
+:root{
+  --bg:#07070b; --panel:#101017; --panel2:#15151e; --border:#292633;
+  --purple:#7c2cff; --purple2:#9b4dff; --text:#f5f2fa; --muted:#a9a4b2;
+  --green:#64d66d; --yellow:#e8b84d; --red:#ff5b6e;
+}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+.hidden{display:none!important}
+.app{min-height:100vh;background:radial-gradient(circle at 10% 0%,#1a092c 0,transparent 28%),radial-gradient(circle at 90% 100%,#16052a 0,transparent 25%),var(--bg)}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px;position:relative;overflow:hidden}
+.login:before,.login:after{content:"";position:absolute;width:55%;height:180px;border:1px solid #6423bd44;border-radius:50%;transform:rotate(-14deg);filter:blur(.2px)}
+.login:before{left:-12%;bottom:-40px}.login:after{right:-12%;top:-40px}
+.login-card{width:min(430px,100%);padding:42px 34px;border:1px solid #31283e;background:#0b0b10dd;backdrop-filter:blur(18px);border-radius:24px;box-shadow:0 30px 80px #0009;position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:13px;margin-bottom:12px}.brand-icon{width:50px;height:50px;border:2px solid var(--purple2);border-radius:12px;display:grid;place-items:center;color:var(--purple2);font-size:25px;box-shadow:0 0 25px #7c2cff33}
+.brand-name{font-size:30px;font-weight:800;letter-spacing:-1px}.brand-name span{color:var(--purple2)}
+.login-sub{color:var(--muted);margin:0 0 32px;line-height:1.5}
+.field{margin:17px 0}.field label{display:block;font-size:13px;margin-bottom:8px;color:#ddd8e5}.input-wrap{position:relative}.input,.select,.textarea{width:100%;border:1px solid #2a2732;background:#15151b;color:var(--text);border-radius:12px;padding:14px 15px;outline:none;transition:.2s}.input:focus,.select:focus,.textarea:focus{border-color:var(--purple2);box-shadow:0 0 0 3px #7c2cff22}.input-wrap .input{padding-right:45px}.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--muted)}
+.login-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin:12px 0 22px}.check{display:flex;align-items:center;gap:8px}.check input{accent-color:var(--purple)}.link{color:#a65cff;cursor:pointer}.primary{width:100%;border:0;border-radius:11px;padding:14px 18px;color:white;font-weight:700;background:linear-gradient(135deg,#6f20ed,#922fff);box-shadow:0 10px 25px #7024ef35}.primary:hover{filter:brightness(1.08)}.login-error{color:#ff7585;font-size:12px;margin:10px 0}.login-foot{text-align:center;color:var(--muted);font-size:12px;margin-top:24px}
+
+.shell{display:grid;grid-template-columns:245px 1fr;min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#0a0a0f;border-right:1px solid #211e29;padding:24px 15px;z-index:20}.side-brand{padding:5px 12px 30px}.side-brand .brand-name{font-size:22px}.nav{display:grid;gap:6px}.nav button{background:transparent;color:#9d98a7;border:0;text-align:left;padding:12px 13px;border-radius:11px;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#221336;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--purple2)}.nav-icon{width:20px;text-align:center;color:#a967ff}.logout{position:absolute;bottom:22px;left:15px;right:15px}.content{grid-column:2;min-width:0}.topbar{height:72px;border-bottom:1px solid #211e29;display:flex;justify-content:flex-end;align-items:center;padding:0 30px;gap:18px;background:#09090d}.user-pill{display:flex;align-items:center;gap:10px;color:#ddd}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6420d6,#a84dff);font-weight:700}.main{max-width:1250px;margin:auto;padding:30px}.view{display:none}.view.active{display:block}.title-row{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}.title{font-size:28px;margin:0;letter-spacing:-.7px}.muted{color:var(--muted);font-size:13px}.grid-stats{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:14px}.card{background:linear-gradient(145deg,#111117,#0d0d12);border:1px solid var(--border);border-radius:17px;padding:20px}.big-card{min-height:150px;position:relative;overflow:hidden}.big-card:after{content:"";position:absolute;width:130px;height:130px;border:1px solid #7c2cff33;border-radius:50%;right:-40px;top:-45px}.big-number{font-size:31px;font-weight:750;margin:7px 0}.purple{color:#a967ff}.stat-label{font-size:12px;color:var(--muted)}.icon-box{width:39px;height:39px;border-radius:11px;background:#6d25d51d;color:#a967ff;display:grid;place-items:center;font-size:18px}.section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section h2{font-size:16px;margin:0}.table-card{padding:0;overflow:hidden}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:15px 18px;border-bottom:1px solid #211e29;text-align:left;font-size:13px}.table th{font-size:11px;text-transform:uppercase;color:#85808e;letter-spacing:.5px}.table tr:last-child td{border-bottom:0}.status{display:inline-flex;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700}.pending{background:#6f4b111c;color:#e5b64e}.paid{background:#1b6a281c;color:#65d76f}.expired{background:#76202c1c;color:#ff6475}.days{color:#e5b64e;font-size:11px}.empty{text-align:center;color:var(--muted);padding:40px}.btn{border:1px solid #302b39;background:#15141b;color:#eee;border-radius:10px;padding:10px 14px}.btn-purple{border:0;background:linear-gradient(135deg,#6f20ed,#922fff);color:#fff;font-weight:700}.filters{display:flex;gap:9px;flex-wrap:wrap}.filter{border:1px solid #2a2632;background:#121118;color:#aaa4b2;padding:8px 14px;border-radius:20px;font-size:12px}.filter.active{background:#7024ed;color:#fff;border-color:#7024ed}.cheque-list{display:grid;gap:11px}.cheque-item{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;padding:16px;background:#111117;border:1px solid #282530;border-radius:15px}.cheque-icon{width:42px;height:42px;border-radius:12px;background:#7024ed18;color:#a967ff;display:grid;place-items:center}.amount{font-weight:700}.form-card{max-width:720px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}.full{grid-column:1/-1}.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.textarea{min-height:100px;resize:vertical}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-row{padding:12px 0;border-bottom:1px solid #24212a;display:flex;justify-content:space-between;gap:20px;font-size:13px}.detail-row span:first-child{color:var(--muted)}.chart{height:245px;display:flex;align-items:end;gap:12px;padding:25px 10px 5px}.bar{flex:1;background:linear-gradient(to top,#5f1ec7,#a45aff);border-radius:8px 8px 3px 3px;min-height:10px;position:relative}.bar span{position:absolute;bottom:-23px;left:50%;transform:translateX(-50%);font-size:10px;color:#888}.donut{width:190px;height:190px;border-radius:50%;background:conic-gradient(#7d2cff 0 49%,#9e4cff 49% 88%,#d63a65 88% 100%);display:grid;place-items:center;margin:auto}.donut:after{content:"$ 4.250.000";width:125px;height:125px;border-radius:50%;background:#101017;display:grid;place-items:center;font-size:14px;font-weight:700}.stats-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.mobile-nav{display:none}.modal{position:fixed;inset:0;background:#0009;display:grid;place-items:center;z-index:50;padding:20px}.modal-card{width:min(450px,100%);background:#111117;border:1px solid #352d40;border-radius:18px;padding:25px;box-shadow:0 30px 90px #000}.modal-head{display:flex;justify-content:space-between;align-items:center}.close{background:none;border:0;color:#aaa;font-size:22px}
+
+@media(max-width:900px){
+  .shell{display:block}.sidebar{display:none}.content{grid-column:auto}.topbar{height:65px;padding:0 18px}.main{padding:20px 16px 90px}.grid-stats{grid-template-columns:1fr 1fr}.grid-stats .big-card{grid-column:1/-1}.stats-layout{grid-template-columns:1fr}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);bottom:0;left:0;right:0;height:68px;background:#0b0b10ee;border-top:1px solid #28232f;z-index:30;backdrop-filter:blur(15px)}.mobile-nav button{border:0;background:none;color:#817c89;font-size:10px}.mobile-nav button.active{color:#a967ff}.mobile-nav .plus{background:linear-gradient(135deg,#7024ed,#963aff);color:#fff;width:48px;height:48px;border-radius:50%;margin:auto;font-size:23px}.cheque-item{grid-template-columns:auto 1fr auto}.cheque-item .cheque-date{display:none}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.table-card{overflow-x:auto}.table{min-width:650px}}
+@media(max-width:520px){
+  .login-card{padding:34px 23px}.brand-name{font-size:27px}.grid-stats{gap:10px}.card{padding:16px}.big-number{font-size:25px}.title{font-size:23px}.title-row{align-items:flex-start}.title-row .btn-purple{padding:10px}.detail-grid{grid-template-columns:1fr}.topbar .user-pill span{display:none}
+}
+</style>
+</head>
+<body>
+<div id="login" class="login">
+  <div class="login-card">
+    <div class="brand"><div class="brand-icon">▤</div><div class="brand-name">Chek<span>Control</span></div></div>
+    <p class="login-sub">Recordá tus cheques, cumplí tus compromisos.</p>
+    <div class="field"><label>Usuario</label><input id="username" class="input" placeholder="Ingresá tu usuario" autocomplete="username"></div>
+    <div class="field"><label>Contraseña</label><div class="input-wrap"><input id="password" type="password" class="input" placeholder="Ingresá tu contraseña" autocomplete="current-password"><button class="eye" onclick="togglePassword()">◉</button></div></div>
+    <div class="login-row"><label class="check"><input type="checkbox" id="remember"> Recordarme</label><span class="link">¿Olvidaste tu contraseña?</span></div>
+    <div id="loginError" class="login-error hidden">Usuario o contraseña incorrectos.</div>
+    <button class="primary" onclick="login()">Iniciar sesión</button>
+    <div class="login-foot">¿No tenés cuenta? <span class="link">Registrate</span></div>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+<div class="shell">
+  <aside class="sidebar">
+    <div class="side-brand"><div class="brand"><div class="brand-icon" style="width:38px;height:38px;font-size:18px">▤</div><div class="brand-name">Chek<span>Control</span></div></div></div>
+    <nav class="nav">
+      <button class="active" data-view="dashboard"><span class="nav-icon">⌂</span> Inicio</button>
+      <button data-view="cheques"><span class="nav-icon">▤</span> Cheques</button>
+      <button data-view="new"><span class="nav-icon">＋</span> Nuevo cheque</button>
+      <button data-view="reminders"><span class="nav-icon">♧</span> Recordatorios</button>
+      <button data-view="stats"><span class="nav-icon">◔</span> Estadísticas</button>
+    </nav>
+    <button class="nav logout" onclick="logout()">⇥ &nbsp; Cerrar sesión</button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar"><div class="user-pill"><div><b>Matías</b><div class="muted">Administrador</div></div><div class="avatar">M</div></div></header>
+    <div class="main">
+
+      <section id="dashboard" class="view active">
+        <div class="title-row"><div><h1 class="title">Bienvenido, <span class="purple">Matías</span></h1><div class="muted">Acá tenés el resumen de tus cheques.</div></div><button class="btn btn-purple" onclick="showView('new')">＋ Nuevo cheque</button></div>
+        <div class="grid-stats">
+          <div class="card big-card"><div class="icon-box">▣</div><div class="stat-label">Cheques próximos</div><div id="nextCount" class="big-number">0</div><div class="muted">en los próximos 7 días</div><div class="stat-label" style="margin-top:15px">Monto total</div><div id="nextAmount" class="purple" style="font-weight:700">$ 0</div></div>
+          <div class="card"><div class="icon-box">▤</div><div class="big-number" id="totalCount">0</div><div class="stat-label">Todos los cheques</div></div>
+          <div class="card"><div class="icon-box">◷</div><div class="big-number" id="pendingCount">0</div><div class="stat-label">Pendientes</div></div>
+          <div class="card"><div class="icon-box">✓</div><div class="big-number" id="paidCount">0</div><div class="stat-label">Pagados</div></div>
+        </div>
+        <div class="section"><div class="section-head"><h2>Próximos a vencer</h2><span class="link" onclick="showView('reminders')">Ver todos</span></div><div id="dashboardList" class="cheque-list"></div></div>
+      </section>
+
+      <section id="cheques" class="view">
+        <div class="title-row"><div><h1 class="title">Cheques</h1><div class="muted">Administrá y consultá todos tus cheques.</div></div><button class="btn btn-purple" onclick="showView('new')">＋ Nuevo cheque</button></div>
+        <div class="card" style="margin-bottom:14px"><div class="filters"><button class="filter active" onclick="setFilter('all',this)">Todos</button><button class="filter" onclick="setFilter('pending',this)">Pendientes</button><button class="filter" onclick="setFilter('paid',this)">Pagados</button><button class="filter" onclick="setFilter('expired',this)">Vencidos</button></div></div>
+        <div id="allCheques" class="cheque-list"></div>
+      </section>
+
+      <section id="new" class="view">
+        <div class="title-row"><div><h1 class="title">Nuevo cheque</h1><div class="muted">Cargá toda la información para recibir recordatorios.</div></div></div>
+        <div class="card form-card">
+          <h2 style="font-size:16px;margin-top:0;color:#a967ff">Información del cheque</h2>
+          <div class="form-grid">
+            <div class="field"><label>Beneficiario</label><input id="fBeneficiario" class="input" placeholder="Nombre del beneficiario"></div>
+            <div class="field"><label>Banco</label><select id="fBanco" class="select"><option value="">Seleccioná el banco</option><option>Banco Macro</option><option>Banco Galicia</option><option>Banco Nación</option><option>Banco Santander</option><option>BBVA</option><option>Banco Provincia</option><option>Otro</option></select></div>
+            <div class="field"><label>Número de cheque</label><input id="fNumero" class="input" placeholder="Ej. 00012345"></div>
+            <div class="field"><label>Fecha de vencimiento</label><input id="fFecha" type="date" class="input"></div>
+            <div class="field"><label>Importe</label><input id="fImporte" type="number" min="0" step="0.01" class="input" placeholder="0"></div>
+            <div class="field"><label>Recordatorio</label><select id="fRecordatorio" class="select"><option value="3">3 días antes</option><option value="1">1 día antes</option><option value="7">7 días antes</option><option value="0">El mismo día</option></select></div>
+            <div class="field full"><label>Observaciones (opcional)</label><textarea id="fObs" class="textarea" placeholder="Agregá una nota..."></textarea></div>
+          </div>
+          <div class="form-actions"><button class="btn" onclick="showView('dashboard')">Cancelar</button><button class="btn btn-purple" onclick="saveCheque()">Guardar cheque</button></div>
+        </div>
+      </section>
+
+      <section id="reminders" class="view">
+        <div class="title-row"><div><h1 class="title">Próximos a vencer</h1><div class="muted">Controlá los pagos que requieren atención.</div></div></div>
+        <div class="card" style="margin-bottom:14px"><div class="filters"><button class="filter active">Todos</button><button class="filter">Esta semana</button><button class="filter">Este mes</button></div></div>
+        <div id="reminderList" class="cheque-list"></div>
+      </section>
+
+      <section id="stats" class="view">
+        <div class="title-row"><div><h1 class="title">Estadísticas</h1><div class="muted">Una visión rápida de tus movimientos.</div></div><select class="select" style="width:auto"><option>Este mes</option><option>Últimos 3 meses</option><option>Este año</option></select></div>
+        <div class="stats-layout">
+          <div class="card"><h2 style="font-size:15px">Distribución de cheques</h2><div class="donut"></div><div style="display:grid;gap:9px;margin-top:20px;font-size:12px"><span>● Pagados &nbsp; $ 2.100.000 &nbsp; 49%</span><span>● Pendientes &nbsp; $ 1.650.000 &nbsp; 39%</span><span>● Vencidos &nbsp; $ 500.000 &nbsp; 12%</span></div></div>
+          <div class="card"><h2 style="font-size:15px">Montos por mes</h2><div class="chart"><div class="bar" style="height:45%"><span>May</span></div><div class="bar" style="height:62%"><span>Jun</span></div><div class="bar" style="height:80%"><span>Jul</span></div><div class="bar" style="height:58%"><span>Ago</span></div><div class="bar" style="height:72%"><span>Sep</span></div></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<div class="mobile-nav">
+  <button class="active" data-view="dashboard">⌂<br>Inicio</button>
+  <button data-view="cheques">▤<br>Cheques</button>
+  <button class="plus" data-view="new">＋</button>
+  <button data-view="reminders">♧<br>Recordatorios</button>
+  <button data-view="stats">◔<br>Más</button>
+</div>
+</div>
+
+<div id="detailModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2 style="margin:0">Detalle del cheque</h2><button class="close" onclick="closeModal()">×</button></div><div id="detailContent"></div></div></div>
+
+<script>
+const DEMO=[
+ {id:1,beneficiario:"Juan Pérez",banco:"Banco Macro",numero:"00012345",fecha:"2026-09-02",importe:650000,obs:"Pago de servicios varios",recordatorio:3,status:"pending"},
+ {id:2,beneficiario:"Empresa SRL",banco:"Banco Galicia",numero:"00087541",fecha:"2026-09-05",importe:1200000,obs:"Proveedor",recordatorio:3,status:"pending"},
+ {id:3,beneficiario:"María Gómez",banco:"Banco Nación",numero:"00077812",fecha:"2026-09-07",importe:900000,obs:"",recordatorio:3,status:"pending"},
+ {id:4,beneficiario:"Proveedor SA",banco:"Banco Santander",numero:"00032154",fecha:"2026-09-12",importe:500000,obs:"",recordatorio:7,status:"pending"},
+ {id:5,beneficiario:"Ana López",banco:"BBVA",numero:"00099123",fecha:"2026-08-20",importe:450000,obs:"",recordatorio:3,status:"paid"}
+];
+let cheques=JSON.parse(localStorage.getItem("chekcontrol_cheques")||"null")||DEMO;
+let currentFilter="all";
+
+function money(n){return new Intl.NumberFormat("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0}).format(n||0)}
+function dateObj(s){return new Date(s+"T00:00:00")}
+function fmtDate(s){return dateObj(s).toLocaleDateString("es-AR",{day:"2-digit",month:"short",year:"numeric"})}
+function daysUntil(s){return Math.ceil((dateObj(s)-new Date(new Date().toDateString()))/86400000)}
+function effectiveStatus(c){if(c.status==="paid")return"paid"; return daysUntil(c.fecha)<0?"expired":"pending"}
+function saveStore(){localStorage.setItem("chekcontrol_cheques",JSON.stringify(cheques))}
+function login(){
+ const u=document.getElementById("username").value.trim(),p=document.getElementById("password").value;
+ if(u==="admintri"&&p==="912125"){
+   localStorage.setItem("chekcontrol_logged","1");document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden");render();
+ }else document.getElementById("loginError").classList.remove("hidden");
+}
+function logout(){localStorage.removeItem("chekcontrol_logged");location.reload()}
+function togglePassword(){const p=document.getElementById("password");p.type=p.type==="password"?"text":"password"}
+function showView(id){
+ document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");
+ document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===id));
+ if(id!=="new")render();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+
+function chequeCard(c){
+ const st=effectiveStatus(c), d=daysUntil(c.fecha);
+ const dayText=st==="paid"?"Pagado":st==="expired"?"Vencido":d===0?"Hoy":d+" días";
+ return `<div class="cheque-item" onclick="openDetail(${c.id})">
+   <div class="cheque-icon">▤</div><div><b>${esc(c.beneficiario)}</b><div class="muted">${esc(c.banco)} · N° ${esc(c.numero)}</div></div>
+   <div class="cheque-date"><div class="amount">${money(c.importe)}</div><div class="muted">${fmtDate(c.fecha)}</div></div>
+   <span class="status ${st}">${dayText}</span>
+ </div>`;
+}
+function render(){
+ const all=cheques.map(c=>({...c,status:effectiveStatus(c)}));
+ const pending=all.filter(c=>c.status==="pending"), paid=all.filter(c=>c.status==="paid");
+ const upcoming=pending.filter(c=>daysUntil(c.fecha)<=7&&daysUntil(c.fecha)>=0).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+ document.getElementById("totalCount").textContent=all.length;
+ document.getElementById("pendingCount").textContent=pending.length;
+ document.getElementById("paidCount").textContent=paid.length;
+ document.getElementById("nextCount").textContent=upcoming.length;
+ document.getElementById("nextAmount").textContent=money(upcoming.reduce((s,c)=>s+c.importe,0));
+ document.getElementById("dashboardList").innerHTML=upcoming.slice(0,5).map(chequeCard).join("")||'<div class="card empty">No hay cheques próximos a vencer.</div>';
+ let filtered=all.filter(c=>currentFilter==="all"||c.status===currentFilter).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+ document.getElementById("allCheques").innerHTML=filtered.map(chequeCard).join("")||'<div class="card empty">No hay cheques en esta categoría.</div>';
+ document.getElementById("reminderList").innerHTML=pending.sort((a,b)=>a.fecha.localeCompare(b.fecha)).map(chequeCard).join("")||'<div class="card empty">No hay pagos pendientes.</div>';
+}
+function setFilter(f,el){currentFilter=f;document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));el.classList.add("active");render()}
+function saveCheque(){
+ const b=document.getElementById("fBeneficiario").value.trim(), banco=document.getElementById("fBanco").value, num=document.getElementById("fNumero").value.trim(), fecha=document.getElementById("fFecha").value, imp=Number(document.getElementById("fImporte").value);
+ if(!b||!banco||!num||!fecha||!imp){alert("Completá beneficiario, banco, número, vencimiento e importe.");return}
+ cheques.push({id:Date.now(),beneficiario:b,banco,numero:num,fecha,importe:imp,obs:document.getElementById("fObs").value.trim(),recordatorio:Number(document.getElementById("fRecordatorio").value),status:"pending"});
+ saveStore();["fBeneficiario","fNumero","fFecha","fImporte","fObs"].forEach(id=>document.getElementById(id).value="");document.getElementById("fBanco").value="";showView("dashboard");
+}
+function openDetail(id){
+ const c=cheques.find(x=>x.id===id);if(!c)return;
+ const st=effectiveStatus(c),d=daysUntil(c.fecha);
+ document.getElementById("detailContent").innerHTML=`<div class="card" style="margin-top:20px;background:#0c0c11">
+ <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:18px">${esc(c.beneficiario)}</b><span class="status ${st}">${st==="paid"?"Pagado":st==="expired"?"Vencido":"Pendiente"}</span></div>
+ <div class="detail-grid" style="margin-top:14px">
+ <div class="detail-row"><span>Banco</span><b>${esc(c.banco)}</b></div><div class="detail-row"><span>Número</span><b>${esc(c.numero)}</b></div>
+ <div class="detail-row"><span>Vencimiento</span><b>${fmtDate(c.fecha)}</b></div><div class="detail-row"><span>Importe</span><b>${money(c.importe)}</b></div>
+ </div><div class="detail-row"><span>Observaciones</span><b>${esc(c.obs||"Sin observaciones")}</b></div>
+ <div style="display:flex;gap:8px;margin-top:18px">${st!=="paid"?`<button class="btn btn-purple" onclick="markPaid(${c.id})">✓ Marcar como pagado</button>`:""}<button class="btn" onclick="deleteCheque(${c.id})">Eliminar</button></div>
+ </div>`;
+ document.getElementById("detailModal").classList.remove("hidden");
+}
+function closeModal(){document.getElementById("detailModal").classList.add("hidden")}
+function markPaid(id){const c=cheques.find(x=>x.id===id);if(c){c.status="paid";saveStore();closeModal();render()}}
+function deleteCheque(id){if(confirm("¿Eliminar este cheque?")){cheques=cheques.filter(x=>x.id!==id);saveStore();closeModal();render()}}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+if(localStorage.getItem("chekcontrol_logged")==="1"){document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden");render()}
+</script>
+</body>
+</html>
