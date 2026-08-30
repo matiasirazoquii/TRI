@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#09090d">
-<title>TRI Transporte Rodrigo Irazoqui — Gestión Integral</title>
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<style>
+```html
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#09090d"><title>TRI Transporte Rodrigo Irazoqui — Gestión Integral</title><script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script><style>
 :root{
   --bg:#07070b; --panel:#101017; --panel2:#15151e; --border:#292633;
   --purple:#7c2cff; --purple2:#9b4dff; --text:#f5f2fa; --muted:#a9a4b2;
@@ -27,17 +19,13 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
 .field{margin:17px 0}.field label{display:block;font-size:13px;margin-bottom:8px;color:#ddd8e5}.input-wrap{position:relative}.input,.select,.textarea{width:100%;border:1px solid #2a2732;background:#15151b;color:var(--text);border-radius:12px;padding:14px 15px;outline:none;transition:.2s}.input:focus,.select:focus,.textarea:focus{border-color:var(--purple2);box-shadow:0 0 0 3px #7c2cff22}.input-wrap .input{padding-right:45px}.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--muted)}
 .login-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin:12px 0 22px}.check{display:flex;align-items:center;gap:8px}.check input{accent-color:var(--purple)}.link{color:#a65cff;cursor:pointer}.primary{width:100%;border:0;border-radius:11px;padding:14px 18px;color:white;font-weight:700;background:linear-gradient(135deg,#6f20ed,#922fff);box-shadow:0 10px 25px #7024ef35}.primary:hover{filter:brightness(1.08)}.login-error{color:#ff7585;font-size:12px;margin:10px 0}.login-foot{text-align:center;color:var(--muted);font-size:12px;margin-top:24px}
 
-.shell{display:grid;grid-template-columns:245px 1fr;min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#0a0a0f;border-right:1px solid #211e29;padding:24px 15px;z-index:20}.side-brand{padding:5px 12px 30px}.side-brand .brand-name{font-size:16px}.nav{display:grid;gap:6px}.nav button{background:transparent;color:#9d98a7;border:0;text-align:left;padding:12px 13px;border-radius:11px;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#221336;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--purple2)}.nav-icon{width:20px;text-align:center;color:#a967ff}.logout{position:absolute;bottom:22px;left:15px;right:15px}.content{grid-column:2;min-width:0}.topbar{height:72px;border-bottom:1px solid #211e29;display:flex;justify-content:flex-end;align-items:center;padding:0 30px;gap:18px;background:#09090d}.user-pill{display:flex;align-items:center;gap:10px;color:#ddd}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6420d6,#a84dff);font-weight:700}.main{max-width:1250px;margin:auto;padding:30px}.view{display:none}.view.active{display:block}.title-row{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}.title{font-size:28px;margin:0;letter-spacing:-.7px}.muted{color:var(--muted);font-size:13px}.grid-stats{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px}.card{background:linear-gradient(145deg,#111117,#0d0d12);border:1px solid var(--border);border-radius:17px;padding:20px}.big-card{min-height:150px;position:relative;overflow:hidden}.big-card:after{content:"";position:absolute;width:130px;height:130px;border:1px solid #7c2cff33;border-radius:50%;right:-40px;top:-45px}.big-number{font-size:28px;font-weight:750;margin:7px 0}.purple{color:#a967ff}.green{color:var(--green)}.blue{color:var(--blue)}.yellow{color:var(--yellow)}.stat-label{font-size:12px;color:var(--muted)}.icon-box{width:39px;height:39px;border-radius:11px;background:#6d25d51d;color:#a967ff;display:grid;place-items:center;font-size:18px}.section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section h2{font-size:16px;margin:0}.status{display:inline-flex;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700}.pending{background:#6f4b111c;color:#e5b64e}.paid{background:#1b6a281c;color:#65d76f}.expired{background:#76202c1c;color:#ff6475}.emitido{background:#3b116f1c;color:#a967ff}.cobrar{background:#11486f1c;color:#4287f5}.empty{text-align:center;color:var(--muted);padding:40px}.btn{border:1px solid #302b39;background:#15141b;color:#eee;border-radius:10px;padding:10px 14px}.btn-purple{border:0;background:linear-gradient(135deg,#6f20ed,#922fff);color:#fff;font-weight:700}.filters{display:flex;gap:9px;flex-wrap:wrap}.filter{border:1px solid #2a2632;background:#121118;color:#aaa4b2;padding:8px 14px;border-radius:20px;font-size:12px}.filter.active{background:#7024ed;color:#fff;border-color:#7024ed}.cheque-list{display:grid;gap:11px}.cheque-item{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;padding:16px;background:#111117;border:1px solid #282530;border-radius:15px}.cheque-icon{width:42px;height:42px;border-radius:12px;background:#7024ed18;color:#a967ff;display:grid;place-items:center}.amount{font-weight:700}.form-card{max-width:720px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}.full{grid-column:1/-1}.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.textarea{min-height:100px;resize:vertical}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-row{padding:12px 0;border-bottom:1px solid #24212a;display:flex;justify-content:space-between;gap:20px;font-size:13px}.detail-row span:first-child{color:var(--muted)}.chart{height:245px;display:flex;align-items:end;gap:12px;padding:25px 10px 5px}.bar{flex:1;background:linear-gradient(to top,#201d2a,#312a40);border-radius:8px 8px 3px 3px;min-height:10px;position:relative}.bar span{position:absolute;bottom:-23px;left:50%;transform:translateX(-50%);font-size:10px;color:#888}.donut{width:190px;height:190px;border-radius:50%;background:#201c29;display:grid;place-items:center;margin:auto}.donut:after{content:"$ 0";width:125px;height:125px;border-radius:50%;background:#101017;display:grid;place-items:center;font-size:14px;font-weight:700}.stats-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.dropzone{border:2px dashed #3a3247;border-radius:16px;padding:30px;text-align:center;background:#121118;cursor:pointer;transition:.2s;margin-bottom:20px}.dropzone:hover{border-color:var(--purple2);background:#181522}.loader{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}.tax-card{background:#13121c;border:1px solid #2a2538;border-radius:12px;padding:15px;margin-top:10px}.tax-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed #282433}.tax-row:last-child{border-bottom:0;font-weight:bold;color:var(--purple2)}
+.shell{display:grid;grid-template-columns:245px 1fr;min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#0a0a0f;border-right:1px solid #211e29;padding:24px 15px;z-index:20}.side-brand{padding:5px 12px 30px}.side-brand .brand-name{font-size:16px}.nav{display:grid;gap:6px}.nav button{background:transparent;color:#9d98a7;border:0;text-align:left;padding:12px 13px;border-radius:11px;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#221336;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--purple2)}.nav-icon{width:20px;text-align:center;color:#a967ff}.logout{position:absolute;bottom:22px;left:15px;right:15px}.content{grid-column:2;min-width:0}.topbar{height:72px;border-bottom:1px solid #211e29;display:flex;justify-flex:flex-end;align-items:center;padding:0 30px;gap:18px;background:#09090d}.user-pill{display:flex;align-items:center;gap:10px;color:#ddd}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6420d6,#a84dff);font-weight:700}.main{max-width:1250px;margin:auto;padding:30px}.view{display:none}.view.active{display:block}.title-row{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}.title{font-size:28px;margin:0;letter-spacing:-.7px}.muted{color:var(--muted);font-size:13px}.grid-stats{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px}.card{background:linear-gradient(145deg,#111117,#0d0d12);border:1px solid var(--border);border-radius:17px;padding:20px}.big-card{min-height:150px;position:relative;overflow:hidden}.big-card:after{content:"";position:absolute;width:130px;height:130px;border:1px solid #7c2cff33;border-radius:50%;right:-40px;top:-45px}.big-number{font-size:28px;font-weight:750;margin:7px 0}.purple{color:#a967ff}.green{color:var(--green)}.blue{color:var(--blue)}.yellow{color:var(--yellow)}.stat-label{font-size:12px;color:var(--muted)}.icon-box{width:39px;height:39px;border-radius:11px;background:#6d25d51d;color:#a967ff;display:grid;place-items:center;font-size:18px}.section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section h2{font-size:16px;margin:0}.status{display:inline-flex;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700}.pending{background:#6f4b111c;color:#e5b64e}.paid{background:#1b6a281c;color:#65d76f}.expired{background:#76202c1c;color:#ff6475}.emitido{background:#3b116f1c;color:#a967ff}.cobrar{background:#11486f1c;color:#4287f5}.empty{text-align:center;color:var(--muted);padding:40px}.btn{border:1px solid #302b39;background:#15141b;color:#eee;border-radius:10px;padding:10px 14px}.btn-purple{border:0;background:linear-gradient(135deg,#6f20ed,#922fff);color:#fff;font-weight:700}.filters{display:flex;gap:9px;flex-wrap:wrap}.filter{border:1px solid #2a2632;background:#121118;color:#aaa4b2;padding:8px 14px;border-radius:20px;font-size:12px}.filter.active{background:#7024ed;color:#fff;border-color:#7024ed}.cheque-list{display:grid;gap:11px}.cheque-item{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;padding:16px;background:#111117;border:1px solid #282530;border-radius:15px}.cheque-icon{width:42px;height:42px;border-radius:12px;background:#7024ed18;color:#a967ff;display:grid;place-items:center}.amount{font-weight:700}.form-card{max-width:720px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}.full{grid-column:1/-1}.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.textarea{min-height:100px;resize:vertical}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-row{padding:12px 0;border-bottom:1px solid #24212a;display:flex;justify-content:space-between;gap:20px;font-size:13px}.detail-row span:first-child{color:var(--muted)}.chart{height:245px;display:flex;align-items:end;gap:12px;padding:25px 10px 5px}.bar{flex:1;background:linear-gradient(to top,#201d2a,#312a40);border-radius:8px 8px 3px 3px;min-height:10px;position:relative}.bar span{position:absolute;bottom:-23px;left:50%;transform:translateX(-50%);font-size:10px;color:#888}.donut{width:190px;height:190px;border-radius:50%;background:#201c29;display:grid;place-items:center;margin:auto}.donut:after{content:"$ 0";width:125px;height:125px;border-radius:50%;background:#101017;display:grid;place-items:center;font-size:14px;font-weight:700}.stats-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.dropzone{border:2px dashed #3a3247;border-radius:16px;padding:30px;text-align:center;background:#121118;cursor:pointer;transition:.2s;margin-bottom:20px}.dropzone:hover{border-color:var(--purple2);background:#181522}.loader{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}.tax-card{background:#13121c;border:1px solid #2a2538;border-radius:12px;padding:15px;margin-top:10px}.tax-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed #282433}.tax-row:last-child{border-bottom:0;font-weight:bold;color:var(--purple2)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .mobile-nav{display:none}.modal{position:fixed;inset:0;background:#0009;display:grid;place-items:center;z-index:50;padding:20px}.modal-card{width:min(500px,100%);background:#111117;border:1px solid #352d40;border-radius:18px;padding:25px;box-shadow:0 30px 90px #000}.modal-head{display:flex;justify-content:space-between;align-items:center}.close{background:none;border:0;color:#aaa;font-size:22px}
 
 @media(max-width:900px){
   .shell{display:block}.sidebar{display:none}.content{grid-column:auto}.topbar{height:65px;padding:0 18px}.main{padding:20px 16px 90px}.grid-stats{grid-template-columns:1fr 1fr}.stats-layout{grid-template-columns:1fr}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(6,1fr);bottom:0;left:0;right:0;height:68px;background:#0b0b10ee;border-top:1px solid #28232f;z-index:30;backdrop-filter:blur(15px)}.mobile-nav button{border:0;background:none;color:#817c89;font-size:9px}.mobile-nav button.active{color:#a967ff}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}
-}
-</style>
-</head>
-<body>
-<div id="login" class="login">
+}</style></head><body><div id="login" class="login">
   <div class="login-card">
     <div class="brand"><div class="brand-icon">TRI</div><div class="brand-name">Transporte <span>Rodrigo Irazoqui</span></div></div>
     <p class="login-sub">Gestión Integral de Cheques y Facturación.</p>
@@ -47,11 +35,7 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
     <div id="loginError" class="login-error hidden">Usuario o contraseña incorrectos.</div>
     <button class="primary" onclick="login()">Iniciar sesión</button>
     <div class="login-foot">¿No tenés cuenta? <span class="link">Registrate</span></div>
-  </div>
-</div>
-
-<div id="app" class="app hidden">
-<div class="shell">
+  </div></div><div id="app" class="app hidden"><div class="shell">
   <aside class="sidebar">
     <div class="side-brand"><div class="brand"><div class="brand-icon" style="min-width:32px;height:32px;font-size:12px">TRI</div><div class="brand-name">Transporte <span>Rodrigo Irazoqui</span></div></div></div>
     <nav class="nav">
@@ -179,22 +163,13 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
       </section>
 
     </div>
-  </main>
-</div>
-
-<div class="mobile-nav">
+  </main></div><div class="mobile-nav">
   <button class="active" data-view="dashboard">⌂<br>Inicio</button>
   <button data-view="cheques">▤<br>Cheques</button>
   <button data-view="facturas">📄<br>Facturas</button>
   <button data-view="new">＋<br>Cargar</button>
   <button data-view="reminders">♧<br>Alertas</button>
-  <button data-view="stats">◔<br>Fiscal</button>
-</div>
-</div>
-
-<div id="detailModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2 style="margin:0">Detalle de Operación</h2><button class="close" onclick="closeModal()">×</button></div><div id="detailContent"></div></div></div>
-
-<script type="module">
+  <button data-view="stats">◔<br>Fiscal</button></div></div><div id="detailModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2 style="margin:0">Detalle de Operación</h2><button class="close" onclick="closeModal()">×</button></div><div id="detailContent"></div></div></div><script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -233,10 +208,7 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
   window.saveStore = function() {
     set(window.chequesRef, window.cheques);
     set(window.facturasRef, window.facturas);
-  };
-</script>
-
-<script>
+  };</script><script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
 function money(n){return new Intl.NumberFormat("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:2}).format(n||0)}
@@ -366,12 +338,9 @@ function saveInvoice(){
  window.facturas.push({ id: Date.now(), emisor, numero, tipo, total, detalle });
  if(window.saveStore) window.saveStore();
  
- document.getElementById("facEmisor").value = "";
- document.getElementById("facNumero").value = "";
- document.getElementById("facTotal").value = "";
- document.getElementById("facDetalle").value = "";
+ ["facEmisor","facNumero","facTotal","facDetalle"].forEach(id => document.getElementById(id).value = "");
  calcTaxes();
- alert("Factura guardada correctamente.");
+ alert("Factura registrada exitosamente.");
  render();
 }
 
@@ -383,185 +352,185 @@ function deleteFactura(id){
  }
 }
 
-function openFacturaDetail(id){
- const f = window.facturas.find(x => x.id === id);
- if(!f) return;
- const neto = f.total / 1.21;
- const iva = f.total - neto;
- document.getElementById("detailContent").innerHTML = `
-   <div class="detail-grid">
-     <div class="detail-row"><span>Tipo Comprobante:</span><b>Factura ${f.tipo}</b></div>
-     <div class="detail-row"><span>Emisor / Proveedor:</span><b>${esc(f.emisor)}</b></div>
-     <div class="detail-row"><span>N° / CUIT:</span><b>${esc(f.numero)}</b></div>
-     <div class="detail-row"><span>Neto Gravado:</span><b>${money(neto)}</b></div>
-     <div class="detail-row"><span>IVA (21%):</span><b>${money(iva)}</b></div>
-     <div class="detail-row"><span>Total:</span><b class="green">${money(f.total)}</b></div>
-   </div>
-   <div style="margin-top:15px">
-     <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:5px">Detalle de la Compra:</label>
-     <div style="background:#15151b;padding:12px;border-radius:10px;border:1px solid #2a2732;white-space:pre-wrap;font-size:13px">${esc(f.detalle || "Sin detalle registrado.")}</div>
-   </div>
- `;
- document.getElementById("detailModal").classList.remove("hidden");
-}
-
 function openDetail(id){
  const c = window.cheques.find(x => x.id === id);
  if(!c) return;
- document.getElementById("detailContent").innerHTML = `
-   <div class="detail-grid">
-     <div class="detail-row"><span>Tipo:</span><b>${c.tipoOp==='cobrar'?'A Cobrar':'Emitido'}</b></div>
-     <div class="detail-row"><span>Librador/Beneficiario:</span><b>${esc(c.beneficiario)}</b></div>
+ const modal = document.getElementById("detailModal");
+ const content = document.getElementById("detailContent");
+ 
+ content.innerHTML = `
+   <div class="detail-grid" style="margin-top:15px">
+     <div class="detail-row"><span>Tipo:</span><b>${c.tipoOp === 'cobrar' ? '📥 A Cobrar' : '📤 Emitido'}</b></div>
+     <div class="detail-row"><span>Beneficiario / Librador:</span><b>${esc(c.beneficiario)}</b></div>
      <div class="detail-row"><span>Banco:</span><b>${esc(c.banco)}</b></div>
-     <div class="detail-row"><span>Número:</span><b>${esc(c.numero)}</b></div>
+     <div class="detail-row"><span>N° Cheque:</span><b>${esc(c.numero)}</b></div>
      <div class="detail-row"><span>Fecha Vencimiento:</span><b>${fmtDate(c.fecha)}</b></div>
-     <div class="detail-row"><span>Importe:</span><b>${money(c.importe)}</b></div>
-     <div class="detail-row"><span>Observaciones:</span><b>${esc(c.obs||'-')}</b></div>
+     <div class="detail-row"><span>Monto:</span><b style="color:var(--purple2)">${money(c.importe)}</b></div>
+     <div class="detail-row" style="grid-column:1/-1"><span>Observaciones:</span><b>${esc(c.obs || 'Sin observaciones')}</b></div>
+   </div>
+   <div class="form-actions" style="margin-top:20px">
+     ${c.status !== 'paid' ? `<button class="btn btn-purple" onclick="markPaid(${c.id})">Marcar como ${c.tipoOp === 'cobrar' ? 'Cobrado' : 'Pagado'}</button>` : ''}
+     <button class="btn" style="color:var(--red)" onclick="deleteCheque(${c.id})">Eliminar</button>
    </div>
  `;
- document.getElementById("detailModal").classList.remove("hidden");
+ modal.classList.remove("hidden");
 }
 
-function closeModal(){ document.getElementById("detailModal").classList.add("hidden"); }
+function openFacturaDetail(id){
+ const f = window.facturas.find(x => x.id === id);
+ if(!f) return;
+ const modal = document.getElementById("detailModal");
+ const content = document.getElementById("detailContent");
+ 
+ const neto = f.total / 1.21;
+ const iva = f.total - neto;
+ 
+ content.innerHTML = `
+   <div class="detail-grid" style="margin-top:15px">
+     <div class="detail-row"><span>Emisor / Proveedor:</span><b>${esc(f.emisor)}</b></div>
+     <div class="detail-row"><span>Tipo / N° Comprobante:</span><b>Factura ${esc(f.tipo)} - ${esc(f.numero)}</b></div>
+     <div class="detail-row"><span>Neto Gravado:</span><b>${money(neto)}</b></div>
+     <div class="detail-row"><span>IVA (21%):</span><b>${money(iva)}</b></div>
+     <div class="detail-row" style="grid-column:1/-1"><span>Total Facturado:</span><b style="color:var(--green);font-size:16px">${money(f.total)}</b></div>
+     <div class="detail-row" style="grid-column:1/-1;flex-direction:column;align-items:flex-start;gap:6px">
+       <span>Detalle de Compra:</span>
+       <div style="background:#15151e;padding:10px;border-radius:8px;width:100%;white-space:pre-wrap;font-size:12px;color:#ddd">${esc(f.detalle || 'Sin detalle de productos registrado.')}</div>
+     </div>
+   </div>
+ `;
+ modal.classList.remove("hidden");
+}
 
-/* FUNCIONALIDAD OCR Y PATRONES AFIP AVANZADO */
+function markPaid(id){
+ const c = window.cheques.find(x => x.id === id);
+ if(c){
+   c.status = 'paid';
+   if(window.saveStore) window.saveStore();
+   closeModal();
+   render();
+ }
+}
+
+function deleteCheque(id){
+ if(confirm("¿Eliminar este cheque permanentemente?")){
+   window.cheques = window.cheques.filter(x => x.id !== id);
+   if(window.saveStore) window.saveStore();
+   closeModal();
+   render();
+ }
+}
+
+function closeModal(){
+ document.getElementById("detailModal").classList.add("hidden");
+}
+
 async function processInvoice(input){
-  const file = input.files[0];
-  if(!file) return;
-  const status = document.getElementById("ocrStatus");
-  status.classList.remove("hidden");
-  let text = "";
-
-  try {
-    if(file.type === "application/pdf"){
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-      for(let i=1; i<=pdf.numPages; i++){
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        text += content.items.map(s => s.str).join(" ") + "\n";
-      }
-    } else {
-      const result = await Tesseract.recognize(file, 'spa');
-      text = result.data.text;
-    }
-    parseInvoiceText(text);
-  } catch(e) {
-    alert("Hubo un error al leer el archivo. Podés ingresar los datos manualmente.");
-  } finally {
-    status.classList.add("hidden");
-  }
+ if(!input.files || !input.files[0]) return;
+ const file = input.files[0];
+ const status = document.getElementById("ocrStatus");
+ status.classList.remove("hidden");
+ 
+ try {
+   let text = "";
+   if(file.type === "application/pdf"){
+     text = await extractTextFromPDF(file);
+   } else {
+     const result = await Tesseract.recognize(file, 'spa');
+     text = result.data.text;
+   }
+   parseInvoiceText(text);
+ } catch(e) {
+   alert("Error al procesar el archivo por OCR.");
+   console.error(e);
+ } finally {
+   status.classList.add("hidden");
+   input.value = "";
+ }
 }
 
-function parseInvoiceText(txt){
-  // 1. Detección de Tipo de Factura A, B, C
-  if(txt.match(/FACTURA\s*A/i) || txt.match(/COD\.\s*0*1\b/i)) document.getElementById("facTipo").value = "A";
-  else if(txt.match(/FACTURA\s*B/i) || txt.match(/COD\.\s*0*6\b/i)) document.getElementById("facTipo").value = "B";
-  else if(txt.match(/FACTURA\s*C/i) || txt.match(/COD\.\s*11\b/i)) document.getElementById("facTipo").value = "C";
-
-  // 2. Extracción de Razón Social del EMISOR (Ignora datos del Receptor/Usuario Rodrigo Irazoqui)
-  let emisor = "";
-  const lines = txt.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-  
-  // Buscar etiquetas típicas del emisor (Vendedor)
-  const emisorMatch = txt.match(/(?:Razón Social|Razon Social|Nombre y Apellido|Vendedor)[:\s]+([^\n\r]+)/i);
-  if(emisorMatch && emisorMatch[1]){
-    let temp = emisorMatch[1].trim();
-    if(!temp.toLowerCase().includes("rodrigo") && !temp.toLowerCase().includes("irazoqui")){
-      emisor = temp;
-    }
-  }
-
-  // Si no se halló por etiqueta, buscar las líneas iniciales de la factura omitiendo la empresa propia
-  if(!emisor){
-    for(let line of lines){
-      const lLower = line.toLowerCase();
-      if(lLower.includes("rodrigo") || lLower.includes("irazoqui") || lLower.includes("factura") || lLower.includes("afip") || lLower.includes("comprobante") || lLower.includes("original") || lLower.includes("copia")) continue;
-      if(line.length > 3 && !/^\d+$/.test(line)){
-        emisor = line;
-        break;
-      }
-    }
-  }
-  if(emisor) document.getElementById("facEmisor").value = emisor;
-
-  // 3. Extracción N° Factura / CUIT del Emisor
-  // Capturar todos los CUITs en el documento
-  const allCuits = [...txt.matchAll(/(?:CUIT[:\s]*)?([\d]{2}-[\d]{8}-[\d]{1})/gi)].map(m => m[1]);
-  // Filtrar CUITs para tomar el del emisor (priorizando el primero si difieren del propio)
-  let cuitEmisor = allCuits.length > 0 ? allCuits[0] : "";
-
-  const numMatch = txt.match(/(?:Comp\.?\s*Nº|Comprobante|Nº|Punto de Venta)[:\s]*([\d\-]+)/i);
-  if(cuitEmisor) {
-    document.getElementById("facNumero").value = (numMatch ? numMatch[1] + " - " : "") + "CUIT: " + cuitEmisor;
-  } else if(numMatch) {
-    document.getElementById("facNumero").value = numMatch[1];
-  }
-
-  // 4. Extracción de Monto Total
-  let montoEncontrado = 0;
-  const patronesTotal = [
-    /(?:TOTAL|Importe Total|Total \$)\s*[:\$]?\s*([\d\.\,]+)/i,
-    /\$\s*([\d\.\,]+)/g
-  ];
-
-  const matchTotal = txt.match(patronesTotal[0]);
-  if(matchTotal){
-    let raw = matchTotal[1].replace(/\./g, '').replace(',', '.');
-    montoEncontrado = parseFloat(raw);
-  } else {
-    // Si no encuentra etiqueta TOTAL exacta, busca el valor numérico con formato de moneda más alto
-    const importes = [];
-    let match;
-    const re = /\$\s*([\d\.\,]+)/g;
-    while ((match = re.exec(txt)) !== null) {
-      let val = parseFloat(match[1].replace(/\./g, '').replace(',', '.'));
-      if(!isNaN(val)) importes.push(val);
-    }
-    if(importes.length > 0) montoEncontrado = Math.max(...importes);
-  }
-
-  if(montoEncontrado > 0){
-    document.getElementById("facTotal").value = montoEncontrado;
-    calcTaxes();
-  }
-
-  // 5. Extracción del Detalle de Productos / Servicios Comprados
-  let detalleLineas = [];
-  let capturandoDetalle = false;
-
-  for(let line of lines){
-    const lLower = line.toLowerCase();
-    
-    // Iniciar captura tras pasar los encabezados de tabla comunes en AFIP
-    if(lLower.includes("código") || lLower.includes("descripcion") || lLower.includes("descripción") || lLower.includes("producto / servicio") || lLower.includes("cantidad")){
-      capturandoDetalle = true;
-      continue;
-    }
-    
-    // Detener la captura al llegar al bloque del resumen fiscal o totales
-    if(lLower.includes("subtotal") || lLower.includes("importe total") || lLower.includes("otros tributos") || lLower.includes("cae") || lLower.includes("pagador")){
-      capturandoDetalle = false;
-    }
-
-    if(capturandoDetalle){
-      // Evitar guardar líneas vacías o de estructura de página
-      if(line.length > 3 && !lLower.includes("unidad de medida") && !lLower.includes("precio unit")){
-        detalleLineas.push(line);
-      }
-    }
-  }
-
-  if(detalleLineas.length > 0){
-    document.getElementById("facDetalle").value = detalleLineas.join("\n");
-  } else {
-    // Intento secundario: Si no halló encabezado de tabla, capturar frases extensas o posibles conceptos
-    const lineasConcepto = lines.filter(l => l.length > 15 && !l.toLowerCase().includes("transporte") && !l.toLowerCase().includes("afip") && !l.toLowerCase().includes("cuit") && !l.toLowerCase().includes("domicilio"));
-    if(lineasConcepto.length > 0){
-      document.getElementById("facDetalle").value = lineasConcepto.slice(0, 5).join("\n");
-    }
-  }
+async function extractTextFromPDF(file){
+ const arrayBuffer = await file.arrayBuffer();
+ const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+ let fullText = "";
+ for(let i = 1; i <= pdf.numPages; i++){
+   const page = await pdf.getPage(i);
+   const content = await page.getTextContent();
+   fullText += content.items.map(item => item.str).join(" ") + "\n";
+ }
+ return fullText;
 }
-</script>
-</body>
-</html>
+
+function parseInvoiceText(text){
+ const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+ const myKeywords = ["transporte rodrigo irazoqui", "irazoqui", "tri"];
+ const myCuits = ["20345678909", "27345678909"];
+
+ let emisor = "";
+ for(let line of lines){
+   const lower = line.toLowerCase();
+   const isMine = myKeywords.some(k => lower.includes(k)) || myCuits.some(c => line.includes(c));
+   if(!isMine && (lower.includes("razon social") || lower.includes("emisor") || lower.includes("s.a.") || lower.includes("s.r.l.") || lower.includes("s.a.s"))){
+     emisor = line.replace(/razon social:|emisor:|vendedor:/i, '').trim();
+     break;
+   }
+ }
+ if(!emisor){
+   for(let line of lines){
+     const lower = line.toLowerCase();
+     const isMine = myKeywords.some(k => lower.includes(k)) || myCuits.some(c => line.includes(c));
+     if(!isMine && line.length > 4 && !lower.includes("factura") && !lower.includes("cuit") && !lower.includes("fecha")){
+       emisor = line;
+       break;
+     }
+   }
+ }
+
+ const cuitMatch = text.match(/cuit[\s:-]*(\d{2}-?\d{8}-?\d{1})/i);
+ const cuit = cuitMatch ? cuitMatch[1] : "";
+ 
+ const numMatch = text.match(/(\d{4,5}-\d{8})/);
+ const numero = numMatch ? numMatch[1] : (cuit ? "CUIT: " + cuit : "N/A");
+
+ const tipoMatch = text.match(/factura\s+([abc])/i) || text.match(/\b([abc])\b\s+cod/i);
+ const tipo = tipoMatch ? tipoMatch[1].toUpperCase() : "A";
+
+ const totalMatches = text.match(/total[\s:$]*([\d.,]+)/gi);
+ let total = 0;
+ if(totalMatches){
+   const lastTotal = totalMatches[totalMatches.length - 1];
+   const numStr = lastTotal.replace(/total[\s:$]*/i, '').replace(/\./g, '').replace(',', '.');
+   total = parseFloat(numStr) || 0;
+ }
+
+ const detalleLines = [];
+ let inItems = false;
+ for(let line of lines){
+   const lower = line.toLowerCase();
+   if(lower.includes("descripcion") || lower.includes("concepto") || lower.includes("detalle") || lower.includes("articulo")){
+     inItems = true;
+     continue;
+   }
+   if(lower.includes("subtotal") || lower.includes("total") || lower.includes("iva")){
+     inItems = false;
+   }
+   if(inItems && line.length > 3){
+     detalleLines.push(line);
+   }
+ }
+
+ document.getElementById("facEmisor").value = emisor;
+ document.getElementById("facNumero").value = numero;
+ document.getElementById("facTipo").value = tipo;
+ document.getElementById("facTotal").value = total || "";
+ document.getElementById("facDetalle").value = detalleLines.join("\n");
+
+ calcTaxes();
+}
+
+if(localStorage.getItem("chekcontrol_logged")==="1"){
+ document.getElementById("login").classList.add("hidden");
+ document.getElementById("app").classList.remove("hidden");
+}
+</script></body></html>
+
+```
