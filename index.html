@@ -468,7 +468,8 @@ function parseInvoiceText(text){
    "tri transporte", 
    "transporte rodrigo",
    "irazoqui rodrigo david",
-   "rodrigo david"
+   "rodrigo david",
+   "eduardo marquina"
  ];
  const myCuits = ["20335347391", "20345678909", "27345678909"];
 
@@ -477,29 +478,28 @@ function parseInvoiceText(text){
    return myKeywords.some(k => l.includes(k)) || myCuits.some(c => str.includes(c));
  }
 
- // --- 1. EXTRACCIÓN DE RAZÓN SOCIAL / EMISOR ---
+ // --- 1. EXTRACCIÓN DEL EMISOR ---
  let emisor = "";
 
  for(let line of lines){
    if(isMyInfo(line)) continue;
-   
-   if(/\b(s\.?a\.?|s\.?r\.?l\.?|s\.?a\.?s\.?|sociedad\tanonima|e\.?i\.?r\.?l\.?|sh|s\.?h\.?)\b/i.test(line)){
+   if(/\b(s\.?r\.?l\.?|s\.?a\.?|s\.?a\.?s\.?|sh|s\.?h\.?)\b/i.test(line)){
      emisor = line.replace(/^(raz[oó]n\s+social|emisor|nombre):?/i, '').trim();
      break;
    }
  }
 
  if(!emisor){
-   const reserved = [
+   const ignored = [
      "factura", "comprobante", "original", "duplicado", "cuit", "fecha", 
-     "puntos de venta", "ingresos brutos", "cod", "codigo", "responsable inscripto",
-     "domicilio", "ubicacion", "condicion de venta", "grupo"
+     "ingresos brutos", "cod", "codigo", "responsable inscripto",
+     "domicilio", "ubicacion", "condicion de venta", "pagina", "pag", "tel"
    ];
-   for(let i = 0; i < Math.min(lines.length, 12); i++){
+   for(let i = 0; i < Math.min(lines.length, 10); i++){
      const l = lines[i];
      const low = l.toLowerCase();
      if(isMyInfo(l)) continue;
-     if(reserved.some(r => low.includes(r))) continue;
+     if(ignored.some(r => low.includes(r))) continue;
      if(l.length >= 3 && !/^\d+$/.test(l)){
        emisor = l;
        break;
@@ -509,41 +509,38 @@ function parseInvoiceText(text){
 
  // --- 2. EXTRACCIÓN DEL MONTO TOTAL ---
  let total = 0;
- const totalCandidates = [];
 
- const amountRegex = /(?:total|importe total|monto|neto|pagar)[\s\w:$]*([$]?\s*[\d\.\,]+)/gi;
- let match;
+ const totalMatch = text.match(/Importe\s+Total\s*:\s*\$?\s*([\d\.\,]+)/i) || 
+                    text.match(/Total\s*:\s*\$?\s*([\d\.\,]+)/i);
 
- while ((match = amountRegex.exec(text)) !== null) {
-   if(match[1]){
-     let rawVal = match[1].replace(/[$]/g, '').trim();
-     
-     if(rawVal.includes('.') && rawVal.includes(',')){
-       if(rawVal.indexOf('.') < rawVal.indexOf(',')){
-         rawVal = rawVal.replace(/\./g, '').replace(',', '.');
-       } else {
-         rawVal = rawVal.replace(/,/g, '');
-       }
-     } else if(rawVal.includes(',')){
-       rawVal = rawVal.replace(',', '.');
-     }
-     
-     const parsed = parseFloat(rawVal);
-     if(!isNaN(parsed) && parsed > 0){
-       totalCandidates.push(parsed);
-     }
+ if(totalMatch && totalMatch[1]){
+   let rawVal = totalMatch[1].trim();
+   if(rawVal.includes('.') && rawVal.includes(',')){
+     rawVal = rawVal.replace(/\./g, '').replace(',', '.');
+   } else if(rawVal.includes(',')){
+     rawVal = rawVal.replace(',', '.');
+   }
+   total = parseFloat(rawVal);
+ }
+
+ if(!total || isNaN(total)){
+   const amounts = text.match(/\$\s*[\d\.]+(?:,\d{2})?/g);
+   if(amounts){
+     const parsedAmounts = amounts.map(a => {
+       let clean = a.replace(/[\$\s]/g, '');
+       if(clean.includes('.') && clean.includes(',')) clean = clean.replace(/\./g, '').replace(',', '.');
+       else if(clean.includes(',')) clean = clean.replace(',', '.');
+       return parseFloat(clean);
+     }).filter(n => !isNaN(n));
+     if(parsedAmounts.length > 0) total = Math.max(...parsedAmounts);
    }
  }
 
- if(totalCandidates.length > 0){
-   total = Math.max(...totalCandidates);
- }
-
- // --- 3. EXTRACCIÓN DE N° COMPROBANTE Y TIPO ---
+ // --- 3. EXTRACCIÓN DE COMPROBANTE Y TIPO ---
  const numMatch = text.match(/(\d{4,5}-\d{8})/);
  const numero = numMatch ? numMatch[1] : "N/A";
 
- const tipoMatch = text.match(/\bFACTURA\b[\s\n]*([ABC])/i) || text.match(/\b([ABC])\b\s+Cod/i);
+ const tipoMatch = text.match(/\bFACTURA\b[\s\S]*?\b([ABC])\b/i) || text.match(/\b([ABC])\b\s+Cod/i);
  const tipo = tipoMatch ? tipoMatch[1].toUpperCase() : "A";
 
  document.getElementById("facEmisor").value = emisor || "Emisor no detectado";
