@@ -406,16 +406,79 @@ function calcTaxes(){
  document.getElementById("taxTotalDisplay").textContent = money(total);
 }
 
-function processInvoice(input){
- const file = input.files[0];
- if(!file) return;
- document.getElementById("ocrStatus").classList.remove("hidden");
- const reader = new FileReader();
- reader.onload = function(e){
-   window.currentFileBase64 = e.target.result;
-   document.getElementById("ocrStatus").classList.add("hidden");
- };
- reader.readAsDataURL(file);
+async function processInvoice(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const statusEl = document.getElementById("ocrStatus");
+  statusEl.classList.remove("hidden");
+  statusEl.innerHTML = '<span class="loader"></span> Procesando comprobante y extrayendo datos con OCR...';
+
+  const reader = new FileReader();
+  reader.onload = async function (e) {
+    window.currentFileBase64 = e.target.result;
+
+    try {
+      let text = "";
+
+      if (file.type === "application/pdf") {
+        text = await extractTextFromPDF(e.target.result);
+      } else {
+        const result = await Tesseract.recognize(e.target.result, 'spa');
+        text = result.data.text;
+      }
+
+      parseInvoiceText(text);
+      statusEl.innerHTML = "✅ ¡Datos detectados y autocompletados correctamente!";
+    } catch (err) {
+      console.error(err);
+      statusEl.innerHTML = "⚠️ No se pudieron extraer todos los datos automáticamente. Podés ingresarlos o corregirlos manualmente.";
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function extractTextFromPDF(dataUrl) {
+  const pdf = await pdfjsLib.getDocument(dataUrl).promise;
+  let fullText = "";
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    fullText += textContent.items.map(item => item.str).join(" ") + " ";
+  }
+  return fullText;
+}
+
+function parseInvoiceText(text) {
+  // Buscar Tipo de Factura (Factura A, B, C)
+  const tipoMatch = text.match(/FACTURA\s+([A-C])/i) || text.match(/\b([A-C])\b\s+COD/i);
+  if (tipoMatch) {
+    document.getElementById("facTipo").value = tipoMatch[1].toUpperCase();
+  }
+
+  // Buscar Monto Total
+  const totalMatch = text.match(/TOTAL\s*\$?\s*([\d\.\,]+)/i) || text.match(/IMPORTE TOTAL\s*\$?\s*([\d\.\,]+)/i);
+  if (totalMatch) {
+    let rawAmount = totalMatch[1].replace(/\./g, '').replace(',', '.');
+    document.getElementById("facTotal").value = parseFloat(rawAmount) || "";
+  }
+
+  // Buscar CUIT o Número de Comprobante
+  const cuitNumMatch = text.match(/CUIT[:\s]*([\d\-]+)/i) || text.match(/Nº\b[:\s]*([\d\-]+)/i);
+  if (cuitNumMatch) {
+    document.getElementById("facNumero").value = cuitNumMatch[1];
+  }
+
+  // Buscar Fechas (DD/MM/YYYY o YYYY-MM-DD)
+  const fechaMatch = text.match(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/);
+  if (fechaMatch) {
+    const [, day, month, year] = fechaMatch;
+    const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    document.getElementById("facFechaEmision").value = formattedDate;
+  }
+
+  // Recalcular desgloses de impuestos (IVA / IIBB)
+  calcTaxes();
 }
 
 function saveInvoice(){
@@ -433,7 +496,6 @@ function saveInvoice(){
    return;
  }
 
- // Verificación de Factura Duplicada
  const duplicada = window.facturas.find(f => f.numero.toLowerCase() === numero.toLowerCase() && f.emisor.toLowerCase() === emisor.toLowerCase());
  if(duplicada){
    const reCargar = confirm(`La factura N° ${numero} de "${emisor}" ya fue cargada anteriormente.\n\n¿Deseas volver a cargarla de todos modos?`);
@@ -537,5 +599,3 @@ function closeModal(id){
  document.getElementById(id).classList.add("hidden");
 }
 </script></body></html>
-
-```
