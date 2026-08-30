@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#09090d"><title>TRI Transporte Rodrigo Irazoqui — Gestión Integral</title><script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script><style>
 :root{
   --bg:#07070b; --panel:#101017; --panel2:#15151e; --border:#292633;
@@ -19,7 +18,7 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
 .field{margin:17px 0}.field label{display:block;font-size:13px;margin-bottom:8px;color:#ddd8e5}.input-wrap{position:relative}.input,.select,.textarea{width:100%;border:1px solid #2a2732;background:#15151b;color:var(--text);border-radius:12px;padding:14px 15px;outline:none;transition:.2s}.input:focus,.select:focus,.textarea:focus{border-color:var(--purple2);box-shadow:0 0 0 3px #7c2cff22}.input-wrap .input{padding-right:45px}.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--muted)}
 .login-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin:12px 0 22px}.check{display:flex;align-items:center;gap:8px}.check input{accent-color:var(--purple)}.link{color:#a65cff;cursor:pointer}.primary{width:100%;border:0;border-radius:11px;padding:14px 18px;color:white;font-weight:700;background:linear-gradient(135deg,#6f20ed,#922fff);box-shadow:0 10px 25px #7024ef35}.primary:hover{filter:brightness(1.08)}.login-error{color:#ff7585;font-size:12px;margin:10px 0}.login-foot{text-align:center;color:var(--muted);font-size:12px;margin-top:24px}
 
-.shell{display:grid;grid-template-columns:245px 1fr;min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#0a0a0f;border-right:1px solid #211e29;padding:24px 15px;z-index:20}.side-brand{padding:5px 12px 30px}.side-brand .brand-name{font-size:16px}.nav{display:grid;gap:6px}.nav button{background:transparent;color:#9d98a7;border:0;text-align:left;padding:12px 13px;border-radius:11px;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#221336;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--purple2)}.nav-icon{width:20px;text-align:center;color:#a967ff}.logout{position:absolute;bottom:22px;left:15px;right:15px}.content{grid-column:2;min-width:0}.topbar{height:72px;border-bottom:1px solid #211e29;display:flex;justify-flex:flex-end;align-items:center;padding:0 30px;gap:18px;background:#09090d}.user-pill{display:flex;align-items:center;gap:10px;color:#ddd}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6420d6,#a84dff);font-weight:700}.main{max-width:1250px;margin:auto;padding:30px}.view{display:none}.view.active{display:block}.title-row{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}.title{font-size:28px;margin:0;letter-spacing:-.7px}.muted{color:var(--muted);font-size:13px}.grid-stats{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px}.card{background:linear-gradient(145deg,#111117,#0d0d12);border:1px solid var(--border);border-radius:17px;padding:20px}.big-card{min-height:150px;position:relative;overflow:hidden}.big-card:after{content:"";position:absolute;width:130px;height:130px;border:1px solid #7c2cff33;border-radius:50%;right:-40px;top:-45px}.big-number{font-size:28px;font-weight:750;margin:7px 0}.purple{color:#a967ff}.green{color:var(--green)}.blue{color:var(--blue)}.yellow{color:var(--yellow)}.stat-label{font-size:12px;color:var(--muted)}.icon-box{width:39px;height:39px;border-radius:11px;background:#6d25d51d;color:#a967ff;display:grid;place-items:center;font-size:18px}.section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section h2{font-size:16px;margin:0}.status{display:inline-flex;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700}.pending{background:#6f4b111c;color:#e5b64e}.paid{background:#1b6a281c;color:#65d76f}.expired{background:#76202c1c;color:#ff6475}.emitido{background:#3b116f1c;color:#a967ff}.cobrar{background:#11486f1c;color:#4287f5}.empty{text-align:center;color:var(--muted);padding:40px}.btn{border:1px solid #302b39;background:#15141b;color:#eee;border-radius:10px;padding:10px 14px}.btn-purple{border:0;background:linear-gradient(135deg,#6f20ed,#922fff);color:#fff;font-weight:700}.filters{display:flex;gap:9px;flex-wrap:wrap}.filter{border:1px solid #2a2632;background:#121118;color:#aaa4b2;padding:8px 14px;border-radius:20px;font-size:12px}.filter.active{background:#7024ed;color:#fff;border-color:#7024ed}.cheque-list{display:grid;gap:11px}.cheque-item{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;padding:16px;background:#111117;border:1px solid #282530;border-radius:15px}.cheque-icon{width:42px;height:42px;border-radius:12px;background:#7024ed18;color:#a967ff;display:grid;place-items:center}.amount{font-weight:700}.form-card{max-width:720px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}.full{grid-column:1/-1}.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.textarea{min-height:100px;resize:vertical}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-row{padding:12px 0;border-bottom:1px solid #24212a;display:flex;justify-content:space-between;gap:20px;font-size:13px}.detail-row span:first-child{color:var(--muted)}.chart{height:245px;display:flex;align-items:end;gap:12px;padding:25px 10px 5px}.bar{flex:1;background:linear-gradient(to top,#201d2a,#312a40);border-radius:8px 8px 3px 3px;min-height:10px;position:relative}.bar span{position:absolute;bottom:-23px;left:50%;transform:translateX(-50%);font-size:10px;color:#888}.donut{width:190px;height:190px;border-radius:50%;background:#201c29;display:grid;place-items:center;margin:auto}.donut:after{content:"$ 0";width:125px;height:125px;border-radius:50%;background:#101017;display:grid;place-items:center;font-size:14px;font-weight:700}.stats-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.dropzone{border:2px dashed #3a3247;border-radius:16px;padding:30px;text-align:center;background:#121118;cursor:pointer;transition:.2s;margin-bottom:20px}.dropzone:hover{border-color:var(--purple2);background:#181522}.loader{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}.tax-card{background:#13121c;border:1px solid #2a2538;border-radius:12px;padding:15px;margin-top:10px}.tax-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed #282433}.tax-row:last-child{border-bottom:0;font-weight:bold;color:var(--purple2)}
+.shell{display:grid;grid-template-columns:245px 1fr;min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#0a0a0f;border-right:1px solid #211e29;padding:24px 15px;z-index:20}.side-brand{padding:5px 12px 30px}.side-brand .brand-name{font-size:16px}.nav{display:grid;gap:6px}.nav button{background:transparent;color:#9d98a7;border:0;text-align:left;padding:12px 13px;border-radius:11px;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#221336;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--purple2)}.nav-icon{width:20px;text-align:center;color:#a967ff}.logout{position:absolute;bottom:22px;left:15px;right:15px}.content{grid-column:2;min-width:0}.topbar{height:72px;border-bottom:1px solid #211e29;display:flex;justify-content:flex-end;align-items:center;padding:0 30px;gap:18px;background:#09090d}.user-pill{display:flex;align-items:center;gap:10px;color:#ddd}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6420d6,#a84dff);font-weight:700}.main{max-width:1250px;margin:auto;padding:30px}.view{display:none}.view.active{display:block}.title-row{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}.title{font-size:28px;margin:0;letter-spacing:-.7px}.muted{color:var(--muted);font-size:13px}.grid-stats{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px}.card{background:linear-gradient(145deg,#111117,#0d0d12);border:1px solid var(--border);border-radius:17px;padding:20px}.big-card{min-height:150px;position:relative;overflow:hidden}.big-card:after{content:"";position:absolute;width:130px;height:130px;border:1px solid #7c2cff33;border-radius:50%;right:-40px;top:-45px}.big-number{font-size:28px;font-weight:750;margin:7px 0}.purple{color:#a967ff}.green{color:var(--green)}.blue{color:var(--blue)}.yellow{color:var(--yellow)}.stat-label{font-size:12px;color:var(--muted)}.icon-box{width:39px;height:39px;border-radius:11px;background:#6d25d51d;color:#a967ff;display:grid;place-items:center;font-size:18px}.section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section h2{font-size:16px;margin:0}.status{display:inline-flex;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700}.pending{background:#6f4b111c;color:#e5b64e}.paid{background:#1b6a281c;color:#65d76f}.expired{background:#76202c1c;color:#ff6475}.emitido{background:#3b116f1c;color:#a967ff}.cobrar{background:#11486f1c;color:#4287f5}.empty{text-align:center;color:var(--muted);padding:40px}.btn{border:1px solid #302b39;background:#15141b;color:#eee;border-radius:10px;padding:10px 14px}.btn-purple{border:0;background:linear-gradient(135deg,#6f20ed,#922fff);color:#fff;font-weight:700}.filters{display:flex;gap:9px;flex-wrap:wrap}.filter{border:1px solid #2a2632;background:#121118;color:#aaa4b2;padding:8px 14px;border-radius:20px;font-size:12px}.filter.active{background:#7024ed;color:#fff;border-color:#7024ed}.cheque-list{display:grid;gap:11px}.cheque-item{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;padding:16px;background:#111117;border:1px solid #282530;border-radius:15px}.cheque-icon{width:42px;height:42px;border-radius:12px;background:#7024ed18;color:#a967ff;display:grid;place-items:center}.amount{font-weight:700}.form-card{max-width:720px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}.full{grid-column:1/-1}.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.textarea{min-height:100px;resize:vertical}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-row{padding:12px 0;border-bottom:1px solid #24212a;display:flex;justify-content:space-between;gap:20px;font-size:13px}.detail-row span:first-child{color:var(--muted)}.donut{width:190px;height:190px;border-radius:50%;background:#201c29;display:grid;place-items:center;margin:auto}.donut:after{content:"$ 0";width:125px;height:125px;border-radius:50%;background:#101017;display:grid;place-items:center;font-size:14px;font-weight:700}.stats-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.dropzone{border:2px dashed #3a3247;border-radius:16px;padding:30px;text-align:center;background:#121118;cursor:pointer;transition:.2s;margin-bottom:20px}.dropzone:hover{border-color:var(--purple2);background:#181522}.loader{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}.tax-card{background:#13121c;border:1px solid #2a2538;border-radius:12px;padding:15px;margin-top:10px}.tax-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed #282433}.tax-row:last-child{border-bottom:0;font-weight:bold;color:var(--purple2)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .mobile-nav{display:none}.modal{position:fixed;inset:0;background:#0009;display:grid;place-items:center;z-index:50;padding:20px}.modal-card{width:min(500px,100%);background:#111117;border:1px solid #352d40;border-radius:18px;padding:25px;box-shadow:0 30px 90px #000}.modal-head{display:flex;justify-content:space-between;align-items:center}.close{background:none;border:0;color:#aaa;font-size:22px}
 
@@ -84,10 +83,10 @@ button,input,select,textarea{font:inherit} button{cursor:pointer}
           <div class="dropzone" onclick="document.getElementById('fileFactura').click()">
             <div style="font-size:32px;margin-bottom:10px">📄 / 🖼️</div>
             <b>Haz clic aquí para subir una Factura (PDF, PNG, JPG)</b>
-            <div class="muted" style="margin-top:5px">Extracción por OCR y cálculo de IVA e Ingresos Brutos</div>
+            <div class="muted" style="margin-top:5px">Extracción optimizada de Razón Social Emisor, Monto e Impuestos</div>
             <input type="file" id="fileFactura" class="hidden" accept="image/*,.pdf" onchange="processInvoice(this)">
           </div>
-          <div id="ocrStatus" class="muted hidden" style="text-align:center;margin-bottom:15px"><span class="loader"></span> Escaneando y analizando texto e impuestos...</div>
+          <div id="ocrStatus" class="muted hidden" style="text-align:center;margin-bottom:15px"><span class="loader"></span> Procesando comprobante y extrayendo campos...</div>
           
           <div class="form-grid">
             <div class="field"><label>Emisor / Proveedor (Quien vendió)</label><input id="facEmisor" class="input" placeholder="Razón social detectada"></div>
@@ -462,67 +461,95 @@ async function extractTextFromPDF(file){
 
 function parseInvoiceText(text){
  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
- const myKeywords = ["transporte rodrigo irazoqui", "irazoqui", "tri"];
- const myCuits = ["20345678909", "27345678909"];
+ 
+ const myKeywords = [
+   "rodrigo irazoqui", 
+   "irazoqui", 
+   "tri transporte", 
+   "transporte rodrigo",
+   "irazoqui rodrigo david",
+   "rodrigo david"
+ ];
+ const myCuits = ["20335347391", "20345678909", "27345678909"];
 
+ function isMyInfo(str){
+   const l = str.toLowerCase();
+   return myKeywords.some(k => l.includes(k)) || myCuits.some(c => str.includes(c));
+ }
+
+ // --- 1. EXTRACCIÓN DE RAZÓN SOCIAL / EMISOR ---
  let emisor = "";
+
  for(let line of lines){
-   const lower = line.toLowerCase();
-   const isMine = myKeywords.some(k => lower.includes(k)) || myCuits.some(c => line.includes(c));
-   if(!isMine && (lower.includes("razon social") || lower.includes("emisor") || lower.includes("s.a.") || lower.includes("s.r.l.") || lower.includes("s.a.s"))){
-     emisor = line.replace(/razon social:|emisor:|vendedor:/i, '').trim();
+   if(isMyInfo(line)) continue;
+   
+   if(/\b(s\.?a\.?|s\.?r\.?l\.?|s\.?a\.?s\.?|sociedad\tanonima|e\.?i\.?r\.?l\.?|sh|s\.?h\.?)\b/i.test(line)){
+     emisor = line.replace(/^(raz[oó]n\s+social|emisor|nombre):?/i, '').trim();
      break;
    }
  }
+
  if(!emisor){
-   for(let line of lines){
-     const lower = line.toLowerCase();
-     const isMine = myKeywords.some(k => lower.includes(k)) || myCuits.some(c => line.includes(c));
-     if(!isMine && line.length > 4 && !lower.includes("factura") && !lower.includes("cuit") && !lower.includes("fecha")){
-       emisor = line;
+   const reserved = [
+     "factura", "comprobante", "original", "duplicado", "cuit", "fecha", 
+     "puntos de venta", "ingresos brutos", "cod", "codigo", "responsable inscripto",
+     "domicilio", "ubicacion", "condicion de venta", "grupo"
+   ];
+   for(let i = 0; i < Math.min(lines.length, 12); i++){
+     const l = lines[i];
+     const low = l.toLowerCase();
+     if(isMyInfo(l)) continue;
+     if(reserved.some(r => low.includes(r))) continue;
+     if(l.length >= 3 && !/^\d+$/.test(l)){
+       emisor = l;
        break;
      }
    }
  }
 
- const cuitMatch = text.match(/cuit[\s:-]*(\d{2}-?\d{8}-?\d{1})/i);
- const cuit = cuitMatch ? cuitMatch[1] : "";
- 
- const numMatch = text.match(/(\d{4,5}-\d{8})/);
- const numero = numMatch ? numMatch[1] : (cuit ? "CUIT: " + cuit : "N/A");
+ // --- 2. EXTRACCIÓN DEL MONTO TOTAL ---
+ let total = 0;
+ const totalCandidates = [];
 
- const tipoMatch = text.match(/factura\s+([abc])/i) || text.match(/\b([abc])\b\s+cod/i);
+ const amountRegex = /(?:total|importe total|monto|neto|pagar)[\s\w:$]*([$]?\s*[\d\.\,]+)/gi;
+ let match;
+
+ while ((match = amountRegex.exec(text)) !== null) {
+   if(match[1]){
+     let rawVal = match[1].replace(/[$]/g, '').trim();
+     
+     if(rawVal.includes('.') && rawVal.includes(',')){
+       if(rawVal.indexOf('.') < rawVal.indexOf(',')){
+         rawVal = rawVal.replace(/\./g, '').replace(',', '.');
+       } else {
+         rawVal = rawVal.replace(/,/g, '');
+       }
+     } else if(rawVal.includes(',')){
+       rawVal = rawVal.replace(',', '.');
+     }
+     
+     const parsed = parseFloat(rawVal);
+     if(!isNaN(parsed) && parsed > 0){
+       totalCandidates.push(parsed);
+     }
+   }
+ }
+
+ if(totalCandidates.length > 0){
+   total = Math.max(...totalCandidates);
+ }
+
+ // --- 3. EXTRACCIÓN DE N° COMPROBANTE Y TIPO ---
+ const numMatch = text.match(/(\d{4,5}-\d{8})/);
+ const numero = numMatch ? numMatch[1] : "N/A";
+
+ const tipoMatch = text.match(/\bFACTURA\b[\s\n]*([ABC])/i) || text.match(/\b([ABC])\b\s+Cod/i);
  const tipo = tipoMatch ? tipoMatch[1].toUpperCase() : "A";
 
- const totalMatches = text.match(/total[\s:$]*([\d.,]+)/gi);
- let total = 0;
- if(totalMatches){
-   const lastTotal = totalMatches[totalMatches.length - 1];
-   const numStr = lastTotal.replace(/total[\s:$]*/i, '').replace(/\./g, '').replace(',', '.');
-   total = parseFloat(numStr) || 0;
- }
-
- const detalleLines = [];
- let inItems = false;
- for(let line of lines){
-   const lower = line.toLowerCase();
-   if(lower.includes("descripcion") || lower.includes("concepto") || lower.includes("detalle") || lower.includes("articulo")){
-     inItems = true;
-     continue;
-   }
-   if(lower.includes("subtotal") || lower.includes("total") || lower.includes("iva")){
-     inItems = false;
-   }
-   if(inItems && line.length > 3){
-     detalleLines.push(line);
-   }
- }
-
- document.getElementById("facEmisor").value = emisor;
+ document.getElementById("facEmisor").value = emisor || "Emisor no detectado";
  document.getElementById("facNumero").value = numero;
  document.getElementById("facTipo").value = tipo;
- document.getElementById("facTotal").value = total || "";
- document.getElementById("facDetalle").value = detalleLines.join("\n");
+ document.getElementById("facTotal").value = total > 0 ? total.toFixed(2) : "";
 
  calcTaxes();
 }
@@ -532,5 +559,3 @@ if(localStorage.getItem("chekcontrol_logged")==="1"){
  document.getElementById("app").classList.remove("hidden");
 }
 </script></body></html>
-
-```
