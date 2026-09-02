@@ -4,11 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#09090d">
-  <title>TRI Transporte Rodrigo Irazoqui — Gestión Integral</title>
-  <!-- PDF.js para renderizar PDFs a Canvas -->
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-  <!-- jsQR para decodificar códigos QR de AFIP/ARCA sin IA y 100% gratis -->
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <title>TRI Transporte Rodrigo Irazoqui — Gestión de Cheques</title>
   <style>
     :root {
       --bg: #07070b;
@@ -212,19 +208,8 @@
     }
     .title { font-size: 28px; margin: 0; letter-spacing: -.7px; }
     .muted { color: var(--muted); font-size: 13px; }
-    .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
     .card { background: linear-gradient(145deg, #111117, #0d0d12); border: 1px solid var(--border); border-radius: 17px; padding: 20px; }
-    .big-card { min-height: 150px; position: relative; overflow: hidden; }
-    .big-card:after {
-      content: "";
-      position: absolute;
-      width: 130px;
-      height: 130px;
-      border: 1px solid #7c2cff33;
-      border-radius: 50%;
-      right: -40px;
-      top: -45px;
-    }
     .big-number { font-size: 28px; font-weight: 750; margin: 7px 0; }
     .purple { color: #a967ff; }
     .green { color: var(--green); }
@@ -278,45 +263,20 @@
       background: #111117;
       border: 1px solid #282530;
       border-radius: 15px;
+      cursor: pointer;
     }
+    .cheque-item:hover { border-color: var(--purple2); }
     .cheque-icon { width: 42px; height: 42px; border-radius: 12px; background: #7024ed18; color: #a967ff; display: grid; place-items: center; }
-    .amount { font-weight: 700; }
+    .amount { font-weight: 700; text-align: right; }
     .form-card { max-width: 720px; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; }
     .full { grid-column: 1/-1; }
     .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
     .textarea { min-height: 100px; resize: vertical; }
-    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .detail-row { padding: 12px 0; border-bottom: 1px solid #24212a; display: flex; justify-content: space-between; gap: 20px; font-size: 13px; }
     .detail-row span:first-child { color: var(--muted); }
-    .donut { width: 190px; height: 190px; border-radius: 50%; background: #201c29; display: grid; place-items: center; margin: auto; }
-    .donut:after { content: "$ 0"; width: 125px; height: 125px; border-radius: 50%; background: #101017; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
     .stats-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .dropzone {
-      border: 2px dashed #3a3247;
-      border-radius: 16px;
-      padding: 30px;
-      text-align: center;
-      background: #121118;
-      cursor: pointer;
-      transition: .2s;
-      margin-bottom: 20px;
-    }
-    .dropzone:hover { border-color: var(--purple2); background: #181522; }
-    .loader {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    .tax-card { background: #13121c; border: 1px solid #2a2538; border-radius: 12px; padding: 15px; margin-top: 10px; }
-    .tax-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px dashed #282433; }
-    .tax-row:last-child { border-bottom: 0; font-weight: bold; color: var(--purple2); }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .mobile-nav { display: none; }
+    
     .modal { position: fixed; inset: 0; background: #0009; display: grid; place-items: center; z-index: 50; padding: 20px; }
     .modal-card {
       width: min(550px, 100%);
@@ -328,8 +288,8 @@
       max-height: 90vh;
       overflow-y: auto;
     }
-    .modal-head { display: flex; justify-content: space-between; align-items: center; }
-    .close { background: none; border: 0; color: #aaa; font-size: 22px; }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .close { background: none; border: 0; color: #aaa; font-size: 22px; cursor: pointer; }
 
     @media(max-width:900px){
       .shell { display: block; }
@@ -342,7 +302,7 @@
       .mobile-nav {
         position: fixed;
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         bottom: 0;
         left: 0;
         right: 0;
@@ -366,7 +326,7 @@
         <div class="brand-icon">TRI</div>
         <div class="brand-name">Transporte <span>Rodrigo Irazoqui</span></div>
       </div>
-      <p class="login-sub">Gestión Integral de Cheques y Facturación.</p>
+      <p class="login-sub">Gestión Integral y Control de Cheques.</p>
       <div class="field"><label>Usuario</label><input id="username" class="input" placeholder="Ingresá tu usuario" autocomplete="username"></div>
       <div class="field"><label>Contraseña</label><div class="input-wrap"><input id="password" type="password" class="input" placeholder="Ingresá tu contraseña" autocomplete="current-password"><button class="eye" onclick="togglePassword()">◉</button></div></div>
       <div class="login-row"><label class="check"><input type="checkbox" id="remember"> Recordarme</label><span class="link">¿Olvidaste tu contraseña?</span></div>
@@ -388,7 +348,6 @@
         <nav class="nav">
           <button class="active" data-view="dashboard"><span class="nav-icon">⌂</span> Inicio</button>
           <button data-view="cheques"><span class="nav-icon">▤</span> Cheques</button>
-          <button data-view="facturas"><span class="nav-icon">📄</span> Facturas ARCA (QR)</button>
           <button data-view="new"><span class="nav-icon">＋</span> Cargar Cheque</button>
           <button data-view="reminders"><span class="nav-icon">♧</span> Recordatorios</button>
           <button data-view="stats"><span class="nav-icon">◔</span> Estadísticas</button>
@@ -404,14 +363,14 @@
 
           <section id="dashboard" class="view active">
             <div class="title-row">
-              <div><h1 class="title">Bienvenido, <span class="purple">Rodrigo</span></h1><div class="muted">Resumen general de cartera y facturación ARCA/AFIP.</div></div>
+              <div><h1 class="title">Bienvenido, <span class="purple">Rodrigo</span></h1><div class="muted">Resumen general de cartera de cheques.</div></div>
               <button class="btn btn-purple" onclick="showView('new')">＋ Nuevo cheque</button>
             </div>
             <div class="grid-stats">
-              <div class="card"><div class="icon-box">⬆</div><div class="stat-label">A Cobrar (Entrantes)</div><div id="dashCobrar" class="big-number blue">$ 0</div></div>
-              <div class="card"><div class="icon-box">⬇</div><div class="stat-label">A Pagar (Emitidos)</div><div id="dashEmitidos" class="big-number purple">$ 0</div></div>
-              <div class="card"><div class="icon-box">🧾</div><div class="stat-label">Facturado Mes (Total)</div><div id="dashFacturas" class="big-number green">$ 0</div></div>
-              <div class="card"><div class="icon-box">🏛</div><div class="stat-label">Est. IVA Débito (21%)</div><div id="dashIva" class="big-number yellow">$ 0</div></div>
+              <div class="card"><div class="icon-box">📥</div><div class="stat-label">A Cobrar (Entrantes)</div><div id="dashCobrar" class="big-number blue">$ 0</div></div>
+              <div class="card"><div class="icon-box">📤</div><div class="stat-label">A Pagar (Emitidos)</div><div id="dashEmitidos" class="big-number purple">$ 0</div></div>
+              <div class="card"><div class="icon-box">⏳</div><div class="stat-label">Pendientes Totales</div><div id="dashPendientes" class="big-number yellow">$ 0</div></div>
+              <div class="card"><div class="icon-box">✓</div><div class="stat-label">Cobrados / Pagados</div><div id="dashLiquidados" class="big-number green">$ 0</div></div>
             </div>
             <div class="section">
               <div class="section-head"><h2>Próximos Cheques a Vencer</h2><span class="link" onclick="showView('cheques')">Ver todos</span></div>
@@ -430,74 +389,16 @@
                 <button class="filter" onclick="setFilter('cobrar',this)">📥 A Cobrar</button>
                 <button class="filter" onclick="setFilter('emitido',this)">📤 Emitidos (A Pagar)</button>
                 <button class="filter" onclick="setFilter('pending',this)">Pendientes</button>
-                <button class="filter" onclick="setFilter('paid',this)">Cobrados/Pagados</button>
+                <button class="filter" onclick="setFilter('paid',this)">Cobrados / Pagados</button>
               </div>
             </div>
             <div id="allCheques" class="cheque-list"></div>
           </section>
 
-          <section id="facturas" class="view">
-            <div class="title-row">
-              <div><h1 class="title">Lector de Facturas ARCA/AFIP</h1><div class="muted">Escanéia el código QR oficial de las facturas (PDF/Imagen) sin depender de IA ni APIs de pago.</div></div>
-            </div>
-            <div class="card">
-              <div class="dropzone" onclick="document.getElementById('fileFactura').click()">
-                <div style="font-size:32px;margin-bottom:10px">📄 / 🖼️</div>
-                <b>Subir Factura PDF o Imagen (Con código QR de ARCA/AFIP)</b>
-                <div class="muted" style="margin-top:5px">Lectura instantánea, directa y 100% precisa desde el código QR oficial</div>
-                <input type="file" id="fileFactura" class="hidden" accept="image/*,.pdf" onchange="processInvoice(this)">
-              </div>
-              <div id="ocrStatus" class="muted hidden" style="text-align:center;margin-bottom:15px"><span class="loader"></span> Leyendo código QR de ARCA/AFIP...</div>
-              
-              <div class="form-grid">
-                <div class="field"><label>Emisor / Proveedor (CUIT)</label><input id="facEmisor" class="input" placeholder="CUIT Emisor detectado"></div>
-                <div class="field"><label>N° Factura / Comprobante</label><input id="facNumero" class="input" placeholder="Ej: 00001-00001234"></div>
-                <div class="field"><label>Tipo Comprobante</label><select id="facTipo" class="select" onchange="calcTaxes()"><option value="A">Factura A</option><option value="B">Factura B</option><option value="C">Factura C</option></select></div>
-                <div class="field"><label>Monto Total ($)</label><input id="facTotal" type="number" step="0.01" class="input" placeholder="0.00" oninput="calcTaxes()"></div>
-                <div class="field"><label>Fecha de Emisión (ARCA)</label><input id="facFechaEmision" type="date" class="input"></div>
-                <div class="field"><label>Fecha Vencimiento Pago</label><input id="facFechaVenc" type="date" class="input"></div>
-                <div class="field"><label>Aviso de Vencimiento</label>
-                  <select id="facRecordatorio" class="select">
-                    <option value="10">10 días antes</option>
-                    <option value="5">5 días antes</option>
-                    <option value="2" selected>2 días antes</option>
-                    <option value="1">1 día antes</option>
-                    <option value="0">El mismo día</option>
-                  </select>
-                </div>
-                <div class="field full"><label>Detalle de los Artículos / Servicios Comprados</label><textarea id="facDetalle" class="textarea" placeholder="Descripción de los artículos o productos comprados..."></textarea></div>
-              </div>
-
-              <div class="tax-card">
-                <div style="font-weight:bold;margin-bottom:8px;color:#a967ff">Desglose Fiscal Estimado (Responsable Inscripto Argentina)</div>
-                <div class="tax-row"><span>Neto Gravado (Base Imp.):</span><span id="taxNeto">$ 0.00</span></div>
-                <div class="tax-row"><span>IVA (21%):</span><span id="taxIva">$ 0.00</span></div>
-                <div class="tax-row"><span>Est. IIBB Retención / Percepción (~3.5%):</span><span id="taxIibb">$ 0.00</span></div>
-                <div class="tax-row"><span>Total Comprobante:</span><span id="taxTotalDisplay">$ 0.00</span></div>
-              </div>
-              <div class="form-actions"><button class="btn btn-purple" onclick="saveInvoice()">Guardar Factura en Sistema</button></div>
-            </div>
-
-            <div class="section">
-              <div class="section-head">
-                <h2>Facturas Registradas</h2>
-              </div>
-              <div class="card" style="margin-bottom:14px">
-                <div class="filters">
-                  <button class="filter active" onclick="setFacturaFilter('all',this)">Todas</button>
-                  <button class="filter" onclick="setFacturaFilter('este_mes',this)">📅 Este Mes</button>
-                  <button class="filter" onclick="setFacturaFilter('10_dias',this)">⏳ Vence en 10 Días</button>
-                  <button class="filter" onclick="setFacturaFilter('5_dias',this)">⚠️ Vence en 5 Días</button>
-                </div>
-              </div>
-              <div id="facturasList" class="cheque-list"></div>
-            </div>
-          </section>
-
           <section id="new" class="view">
             <div class="title-row"><div><h1 class="title">Cargar Cheque</h1><div class="muted">Registrá un nuevo cheque entrante o saliente.</div></div></div>
             <div class="card form-card">
-              <h2 style="font-size:16px;margin-top:0;color:#a967ff">Datos de la Operación</h2>
+              <h2 style="font-size:16px;margin-top:0;color:#a967ff">Datos del Cheque</h2>
               <div class="form-grid">
                 <div class="field full"><label>Tipo de Cheque</label>
                   <select id="fTipoOperacion" class="select">
@@ -506,7 +407,19 @@
                   </select>
                 </div>
                 <div class="field"><label>Librador / Beneficiario</label><input id="fBeneficiario" class="input" placeholder="Razón social o Nombre"></div>
-                <div class="field"><label>Banco</label><select id="fBanco" class="select"><option value="">Seleccioná el banco</option><option>Banco Credicoop</option><option>Banco Macro</option><option>Banco Galicia</option><option>Banco Nación</option><option>Banco Santander</option><option>BBVA</option><option>Banco Provincia</option><option>Otro</option></select></div>
+                <div class="field"><label>Banco</label>
+                  <select id="fBanco" class="select">
+                    <option value="">Seleccioná el banco</option>
+                    <option>Banco Credicoop</option>
+                    <option>Banco Macro</option>
+                    <option>Banco Galicia</option>
+                    <option>Banco Nación</option>
+                    <option>Banco Santander</option>
+                    <option>BBVA</option>
+                    <option>Banco Provincia</option>
+                    <option>Otro</option>
+                  </select>
+                </div>
                 <div class="field"><label>Número de cheque</label><input id="fNumero" class="input" placeholder="Ej. 00012345"></div>
                 <div class="field"><label>Fecha de Vencimiento / Cobro</label><input id="fFecha" type="date" class="input"></div>
                 <div class="field"><label>Importe ($)</label><input id="fImporte" type="number" min="0" step="0.01" class="input" placeholder="0"></div>
@@ -521,7 +434,10 @@
                 </div>
                 <div class="field full"><label>Observaciones</label><textarea id="fObs" class="textarea" placeholder="Añadir notas adicionales..."></textarea></div>
               </div>
-              <div class="form-actions"><button class="btn" onclick="showView('dashboard')">Cancelar</button><button class="btn btn-purple" onclick="saveCheque()">Guardar Cheque</button></div>
+              <div class="form-actions">
+                <button class="btn" onclick="showView('dashboard')">Cancelar</button>
+                <button class="btn btn-purple" onclick="saveCheque()">Guardar Cheque</button>
+              </div>
             </div>
           </section>
 
@@ -531,25 +447,20 @@
           </section>
 
           <section id="stats" class="view">
-            <div class="title-row"><div><h1 class="title">Estadísticas e Impuestos</h1><div class="muted">Balance general e impacto fiscal.</div></div></div>
+            <div class="title-row"><div><h1 class="title">Estadísticas de Cartera</h1><div class="muted">Resumen cuantitativo del volumen de cheques.</div></div></div>
             <div class="stats-layout">
               <div class="card">
-                <h2 style="font-size:15px;margin-bottom:15px">Resumen Fiscal Facturas (Responsable Inscripto)</h2>
-                <div class="tax-card" style="margin-top:0">
-                  <div class="tax-row"><span>Total Facturado Acumulado:</span><span id="stTotalFac" class="green">$ 0.00</span></div>
-                  <div class="tax-row"><span>Total Base Impagable (Neto):</span><span id="stNetoFac">$ 0.00</span></div>
-                  <div class="tax-row"><span>Débito Fiscal IVA Total (21%):</span><span id="stIvaFac" class="yellow">$ 0.00</span></div>
-                  <div class="tax-row"><span>Est. Prov. IIBB (3.5% Avg):</span><span id="stIibbFac">$ 0.00</span></div>
-                  <div class="tax-row"><span>Ganancias Estimadas (~2%):</span><span id="stGananciasFac">$ 0.00</span></div>
-                </div>
+                <h2 style="font-size:15px;margin-bottom:15px;color:#a967ff">Consolidado General</h2>
+                <div class="detail-row"><span>Total Registrado:</span><b id="stTotalGeneral">$ 0.00</b></div>
+                <div class="detail-row"><span>Total A Cobrar:</span><b id="stTotalCobrar" class="blue">$ 0.00</b></div>
+                <div class="detail-row"><span>Total Emitidos:</span><b id="stTotalEmitidos" class="purple">$ 0.00</b></div>
+                <div class="detail-row"><span>Total Vencidos:</span><b id="stTotalVencidos" style="color:var(--red)">$ 0.00</b></div>
               </div>
               <div class="card">
-                <h2 style="font-size:15px">Distribución de Cheques</h2>
-                <div class="donut"></div>
-                <div style="display:grid;gap:9px;margin-top:20px;font-size:12px">
-                  <span>● Cheques A Cobrar: <b id="stCobrarTxt" class="blue">$ 0</b></span>
-                  <span>● Cheques A Pagar: <b id="stEmitidosTxt" class="purple">$ 0</b></span>
-                </div>
+                <h2 style="font-size:15px;margin-bottom:15px;color:#a967ff">Estado de Transacciones</h2>
+                <div class="detail-row"><span>Cheques Liquidados:</span><b id="stCountPaid">0</b></div>
+                <div class="detail-row"><span>Cheques Pendientes:</span><b id="stCountPending">0</b></div>
+                <div class="detail-row"><span>Cheques Vencidos:</span><b id="stCountExpired">0</b></div>
               </div>
             </div>
           </section>
@@ -561,17 +472,19 @@
     <div class="mobile-nav">
       <button class="active" data-view="dashboard">⌂<br>Inicio</button>
       <button data-view="cheques">▤<br>Cheques</button>
-      <button data-view="facturas">📄<br>Facturas</button>
       <button data-view="new">＋<br>Cargar</button>
       <button data-view="reminders">♧<br>Alertas</button>
-      <button data-view="stats">◔<br>Fiscal</button>
+      <button data-view="stats">◔<br>Estadísticas</button>
     </div>
   </div>
 
-  <!-- Modales -->
+  <!-- Modal Detalle -->
   <div id="detailModal" class="modal hidden">
     <div class="modal-card">
-      <div class="modal-head"><h2 style="margin:0">Detalle de Operación</h2><button class="close" onclick="closeModal('detailModal')">×</button></div>
+      <div class="modal-head">
+        <h2 style="margin:0">Detalle del Cheque</h2>
+        <button class="close" onclick="closeModal('detailModal')">×</button>
+      </div>
       <div id="detailContent"></div>
     </div>
   </div>
@@ -594,12 +507,8 @@
     const db = getDatabase(app);
     
     window.chequesRef = ref(db, 'cheques_v2');
-    window.facturasRef = ref(db, 'facturas_v2');
-
     window.cheques = [];
-    window.facturas = [];
     window.currentFilter = "all";
-    window.currentFacturaFilter = "all";
 
     onValue(window.chequesRef, (snapshot) => {
       const data = snapshot.val();
@@ -607,21 +516,12 @@
       render();
     });
 
-    onValue(window.facturasRef, (snapshot) => {
-      const data = snapshot.val();
-      window.facturas = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
-      render();
-    });
-
     window.saveStore = function() {
       set(window.chequesRef, window.cheques);
-      set(window.facturasRef, window.facturas);
     };
   </script>
 
   <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-
     function money(n){return new Intl.NumberFormat("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:2}).format(n||0)}
     function dateObj(s){return s ? new Date(s+"T00:00:00") : new Date()}
     function fmtDate(s){return s ? dateObj(s).toLocaleDateString("es-AR",{day:"2-digit",month:"short",year:"numeric"}) : "N/A"}
@@ -630,14 +530,17 @@
     function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
     function login(){
-      const u=document.getElementById("username").value.trim(),p=document.getElementById("password").value;
+      const u=document.getElementById("username").value.trim(), p=document.getElementById("password").value;
       if(u==="admintri"&&p==="912125"){
         localStorage.setItem("chekcontrol_logged","1");
         document.getElementById("login").classList.add("hidden");
         document.getElementById("app").classList.remove("hidden");
         render();
-      }else document.getElementById("loginError").classList.remove("hidden");
+      } else {
+        document.getElementById("loginError").classList.remove("hidden");
+      }
     }
+
     function logout(){localStorage.removeItem("chekcontrol_logged");location.reload()}
     function togglePassword(){const p=document.getElementById("password");p.type=p.type==="password"?"text":"password"}
 
@@ -645,9 +548,10 @@
       document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
       document.getElementById(id).classList.add("active");
       document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===id));
-      if(id!=="new")render();
+      if(id!=="new") render();
       window.scrollTo({top:0,behavior:"smooth"});
     }
+
     document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
 
     function chequeCard(c){
@@ -662,190 +566,112 @@
       </div>`;
     }
 
-    // ==========================================
-    // PROCESAMIENTO DE FACTURAS CON LECTURA DE QR DE ARCA/AFIP (100% GRATIS)
-    // ==========================================
-    async function processInvoice(input) {
-      const file = input.files[0];
-      if (!file) return;
-
-      const statusEl = document.getElementById("ocrStatus");
-      statusEl.classList.remove("hidden");
-      statusEl.innerHTML = '<span class="loader"></span> Leyendo código QR de ARCA/AFIP...';
-
-      try {
-        let canvas = document.createElement("canvas");
-        let ctx = canvas.getContext("2d");
-
-        // 1. Si es PDF, convertimos la primera página a Imagen con PDF.js
-        if (file.type === "application/pdf") {
-          const arrayBuffer = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-          const page = await pdf.getPage(1);
-          
-          const viewport = page.getViewport({ scale: 2.5 }); // Escala alta definición para QR
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-
-          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-        } else {
-          // 2. Si es Imagen (PNG, JPG)
-          const img = await new Promise((resolve, reject) => {
-            const image = new Image();
-            image.onload = () => resolve(image);
-            image.onerror = reject;
-            image.src = URL.createObjectURL(file);
-          });
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-        }
-
-        // 3. Escaneo del QR en el Canvas con jsQR
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height, {
-          inversionAttempts: "dontInvert",
-        });
-
-        if (code && code.data) {
-          parseAfipQR(code.data);
-          statusEl.innerHTML = "✅ Factura leída exitosamente desde el código QR oficial de ARCA/AFIP.";
-        } else {
-          statusEl.innerHTML = "⚠️ No se encontró código QR en el comprobante. Por favor verifica el archivo.";
-        }
-      } catch (err) {
-        console.error(err);
-        statusEl.innerHTML = "⚠️ Error al procesar el archivo. Intenta con otro comprobante.";
-      }
+    function setFilter(type, btn){
+      window.currentFilter = type;
+      document.querySelectorAll('.filters .filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderChequesTab();
     }
 
-    // Decodificador del enlace QR de AFIP/ARCA
-    function parseAfipQR(qrData) {
-      try {
-        // Formato estándar AFIP: https://www.afip.gob.ar/fe/qr/?p=BASE64_STRING
-        let url;
-        if (qrData.startsWith("http")) {
-          url = new URL(qrData);
-        } else {
-          url = new URL("https://www.afip.gob.ar/fe/qr/?p=" + qrData);
-        }
-        
-        const pParam = url.searchParams.get("p");
-        if (!pParam) throw new Error("QR no reconocido como comprobante AFIP/ARCA");
+    function renderChequesTab(){
+      const container = document.getElementById("allCheques");
+      let list = [...window.cheques];
 
-        // Decodificar Base64
-        const jsonString = atob(pParam);
-        const data = JSON.parse(jsonString);
+      if(window.currentFilter === 'cobrar') list = list.filter(c => c.tipoOp === 'cobrar');
+      else if(window.currentFilter === 'emitido') list = list.filter(c => c.tipoOp === 'emitido');
+      else if(window.currentFilter === 'pending') list = list.filter(c => effectiveStatus(c) === 'pending');
+      else if(window.currentFilter === 'paid') list = list.filter(c => effectiveStatus(c) === 'paid');
 
-        // Mapeo de tipos de comprobante de AFIP a letra
-        const tiposMap = {
-          1: "A", 2: "A", 3: "A",
-          6: "B", 7: "B", 8: "B",
-          11: "C", 12: "C", 13: "C"
-        };
-
-        // Autocompletar campos del formulario
-        document.getElementById("facNumero").value = `${data.ptoVta || '0001'}-${data.nroCmp || ''}`;
-        document.getElementById("facTipo").value = tiposMap[data.tipoCmp] || "A";
-        document.getElementById("facTotal").value = data.importe;
-        document.getElementById("facFechaEmision").value = data.fecha; // Formato YYYY-MM-DD
-        document.getElementById("facEmisor").value = `CUIT: ${data.cuit}`;
-
-        calcTaxes(); // Recalcular impuestos automáticamente
-      } catch (e) {
-        console.error("Error interpretando QR:", e);
-        alert("El código QR detectado no pertenece a una factura oficial de AFIP/ARCA.");
-      }
-    }
-
-    function calcTaxes() {
-      const total = parseFloat(document.getElementById("facTotal").value) || 0;
-      const tipo = document.getElementById("facTipo").value;
-
-      let neto = 0, iva = 0, iibb = 0;
-
-      if (tipo === "A" || tipo === "B") {
-        neto = total / 1.21;
-        iva = total - neto;
-        iibb = neto * 0.035;
+      if(list.length === 0){
+        container.innerHTML = `<div class="empty">No se encontraron cheques.</div>`;
       } else {
-        neto = total;
-        iva = 0;
-        iibb = total * 0.035;
+        container.innerHTML = list.map(chequeCard).join('');
       }
-
-      document.getElementById("taxNeto").textContent = money(neto);
-      document.getElementById("taxIva").textContent = money(iva);
-      document.getElementById("taxIibb").textContent = money(iibb);
-      document.getElementById("taxTotalDisplay").textContent = money(total);
     }
 
-    function saveInvoice() {
-      const emisor = document.getElementById("facEmisor").value.trim();
-      const total = parseFloat(document.getElementById("facTotal").value);
+    function render(){
+      if(!window.cheques) return;
 
-      if (!emisor || isNaN(total)) {
-        alert("Por favor completa al menos el Emisor y el Total de la factura.");
-        return;
-      }
+      // Dashboard Calculos
+      const cobrar = window.cheques.filter(c=>c.tipoOp==='cobrar'&&effectiveStatus(c)!=='paid').reduce((a,b)=>a+Number(b.importe||0),0);
+      const emitidos = window.cheques.filter(c=>c.tipoOp==='emitido'&&effectiveStatus(c)!=='paid').reduce((a,b)=>a+Number(b.importe||0),0);
+      const pendientes = window.cheques.filter(c=>effectiveStatus(c)==='pending').reduce((a,b)=>a+Number(b.importe||0),0);
+      const liquidados = window.cheques.filter(c=>effectiveStatus(c)==='paid').reduce((a,b)=>a+Number(b.importe||0),0);
 
-      const nuevaFactura = {
-        id: Date.now(),
-        emisor: emisor,
-        numero: document.getElementById("facNumero").value,
-        tipo: document.getElementById("facTipo").value,
-        total: total,
-        fechaEmision: document.getElementById("facFechaEmision").value,
-        fechaVenc: document.getElementById("facFechaVenc").value,
-        recordatorio: document.getElementById("facRecordatorio").value,
-        detalle: document.getElementById("facDetalle").value
-      };
+      document.getElementById("dashCobrar").innerText = money(cobrar);
+      document.getElementById("dashEmitidos").innerText = money(emitidos);
+      document.getElementById("dashPendientes").innerText = money(pendientes);
+      document.getElementById("dashLiquidados").innerText = money(liquidados);
 
-      window.facturas.push(nuevaFactura);
-      window.saveStore();
+      // Dashboard Lista Próximos
+      const upcoming = [...window.cheques]
+        .filter(c => effectiveStatus(c) === 'pending')
+        .sort((a,b) => dateObj(a.fecha) - dateObj(b.fecha))
+        .slice(0, 5);
 
-      // Limpiar campos
-      document.getElementById("facEmisor").value = "";
-      document.getElementById("facNumero").value = "";
-      document.getElementById("facTotal").value = "";
-      document.getElementById("facFechaEmision").value = "";
-      document.getElementById("facFechaVenc").value = "";
-      document.getElementById("facDetalle").value = "";
-      document.getElementById("ocrStatus").classList.add("hidden");
+      document.getElementById("dashboardList").innerHTML = upcoming.length 
+        ? upcoming.map(chequeCard).join('') 
+        : `<div class="empty">No hay cheques pendientes próximos.</div>`;
 
-      alert("Factura guardada correctamente.");
-      render();
+      // Recordatorios
+      const reminders = [...window.cheques]
+        .filter(c => effectiveStatus(c) === 'pending' && daysUntil(c.fecha) <= Number(c.recordatorio || 5))
+        .sort((a,b) => dateObj(a.fecha) - dateObj(b.fecha));
+
+      document.getElementById("reminderList").innerHTML = reminders.length 
+        ? reminders.map(chequeCard).join('') 
+        : `<div class="empty">No tienes alertas de vencimiento pendientes.</div>`;
+
+      // Estadísticas Tab
+      const totalGeneral = window.cheques.reduce((a,b)=>a+Number(b.importe||0),0);
+      const totalCobrarAll = window.cheques.filter(c=>c.tipoOp==='cobrar').reduce((a,b)=>a+Number(b.importe||0),0);
+      const totalEmitidosAll = window.cheques.filter(c=>c.tipoOp==='emitido').reduce((a,b)=>a+Number(b.importe||0),0);
+      const totalVencidos = window.cheques.filter(c=>effectiveStatus(c)==='expired').reduce((a,b)=>a+Number(b.importe||0),0);
+
+      document.getElementById("stTotalGeneral").innerText = money(totalGeneral);
+      document.getElementById("stTotalCobrar").innerText = money(totalCobrarAll);
+      document.getElementById("stTotalEmitidos").innerText = money(totalEmitidosAll);
+      document.getElementById("stTotalVencidos").innerText = money(totalVencidos);
+
+      document.getElementById("stCountPaid").innerText = window.cheques.filter(c=>effectiveStatus(c)==='paid').length;
+      document.getElementById("stCountPending").innerText = window.cheques.filter(c=>effectiveStatus(c)==='pending').length;
+      document.getElementById("stCountExpired").innerText = window.cheques.filter(c=>effectiveStatus(c)==='expired').length;
+
+      renderChequesTab();
     }
 
-    function saveCheque() {
+    function saveCheque(){
+      const tipoOp = document.getElementById("fTipoOperacion").value;
       const beneficiario = document.getElementById("fBeneficiario").value.trim();
       const banco = document.getElementById("fBanco").value;
       const numero = document.getElementById("fNumero").value.trim();
       const fecha = document.getElementById("fFecha").value;
       const importe = parseFloat(document.getElementById("fImporte").value);
-      const tipoOp = document.getElementById("fTipoOperacion").value;
+      const recordatorio = document.getElementById("fRecordatorio").value;
+      const obs = document.getElementById("fObs").value.trim();
 
-      if (!beneficiario || !banco || !numero || !fecha || isNaN(importe)) {
-        alert("Por favor completa todos los campos requeridos.");
+      if(!beneficiario || !banco || !numero || !fecha || isNaN(importe)){
+        alert("Por favor completá los campos obligatorios.");
         return;
       }
 
-      const nuevoCheque = {
+      const item = {
         id: Date.now(),
-        tipoOp: tipoOp,
-        beneficiario: beneficiario,
-        banco: banco,
-        numero: numero,
-        fecha: fecha,
-        importe: importe,
-        recordatorio: document.getElementById("fRecordatorio").value,
-        obs: document.getElementById("fObs").value,
+        tipoOp,
+        beneficiario,
+        banco,
+        numero,
+        fecha,
+        importe,
+        recordatorio,
+        obs,
         status: "pending"
       };
 
-      window.cheques.push(nuevoCheque);
+      window.cheques.push(item);
       window.saveStore();
 
+      // Limpiar Formulario
       document.getElementById("fBeneficiario").value = "";
       document.getElementById("fBanco").value = "";
       document.getElementById("fNumero").value = "";
@@ -853,87 +679,57 @@
       document.getElementById("fImporte").value = "";
       document.getElementById("fObs").value = "";
 
-      alert("Cheque registrado exitosamente.");
       showView("cheques");
     }
 
-    function setFilter(f, el) {
-      window.currentFilter = f;
-      document.querySelectorAll("#cheques .filter").forEach(x => x.classList.remove("active"));
-      el.classList.add("active");
-      render();
-    }
+    function openDetail(id){
+      const c = window.cheques.find(x => x.id === id);
+      if(!c) return;
 
-    function setFacturaFilter(f, el) {
-      window.currentFacturaFilter = f;
-      document.querySelectorAll("#facturas .filter").forEach(x => x.classList.remove("active"));
-      el.classList.add("active");
-      render();
-    }
-
-    function render(){
-      const allCheques=(window.cheques||[]).map(c=>({...c,status:effectiveStatus(c)}));
-      const totalCobrar = allCheques.filter(c=>c.tipoOp==='cobrar' && c.status!=='paid').reduce((s,c)=>s+c.importe,0);
-      const totalEmitidos = allCheques.filter(c=>(c.tipoOp==='emitido'||!c.tipoOp) && c.status!=='paid').reduce((s,c)=>s+c.importe,0);
-      
-      const allFacturas = window.facturas||[];
-      const totalFacturado = allFacturas.reduce((s,f)=>s+f.total,0);
-      const totalIva = totalFacturado - (totalFacturado / 1.21);
-
-      document.getElementById("dashCobrar").textContent = money(totalCobrar);
-      document.getElementById("dashEmitidos").textContent = money(totalEmitidos);
-      document.getElementById("dashFacturas").textContent = money(totalFacturado);
-      document.getElementById("dashIva").textContent = money(totalIva);
-
-      const upcoming=allCheques.filter(c=>c.status==='pending'&&daysUntil(c.fecha)<=7&&daysUntil(c.fecha)>=0).sort((a,b)=>a.fecha.localeCompare(b.fecha));
-      document.getElementById("dashboardList").innerHTML=upcoming.slice(0,5).map(chequeCard).join("")||'<div class="card empty">No hay cheques próximos a vencer.</div>';
-
-      let filtered=allCheques.filter(c=>{
-        if(window.currentFilter==='cobrar') return c.tipoOp==='cobrar';
-        if(window.currentFilter==='emitido') return c.tipoOp==='emitido'||!c.tipoOp;
-        if(window.currentFilter==='all') return true;
-        return c.status===window.currentFilter;
-      }).sort((a,b)=>a.fecha.localeCompare(b.fecha));
-      document.getElementById("allCheques").innerHTML=filtered.map(chequeCard).join("")||'<div class="card empty">No hay cheques registrados en esta categoría.</div>';
-
-      document.getElementById("reminderList").innerHTML=allCheques.filter(c=>c.status==='pending').sort((a,b)=>a.fecha.localeCompare(b.fecha)).map(chequeCard).join("")||'<div class="card empty">No hay pagos o cobros pendientes.</div>';
-
-      // Filtrado de Facturas
-      const hoy = new Date();
-      let facturasFiltradas = allFacturas.filter(f => {
-        if (!f.fechaVenc) return true;
-        const fechaV = new Date(f.fechaVenc + "T00:00:00");
-        const difDias = Math.ceil((fechaV - hoy) / (1000 * 60 * 60 * 24));
-        
-        if (window.currentFacturaFilter === 'este_mes') {
-          return fechaV.getMonth() === hoy.getMonth() && fechaV.getFullYear() === hoy.getFullYear();
-        }
-        if (window.currentFacturaFilter === '10_dias') {
-          return difDias >= 0 && difDias <= 10;
-        }
-        if (window.currentFacturaFilter === '5_dias') {
-          return difDias >= 0 && difDias <= 5;
-        }
-        return true;
-      });
-
-      document.getElementById("facturasList").innerHTML = facturasFiltradas.map(f=>`
-        <div class="cheque-item">
-          <div class="cheque-icon">🧾</div>
-          <div>
-            <b>${esc(f.emisor)}</b> <span class="status paid">Factura ${f.tipo}</span>
-            <div class="muted">N° ${esc(f.numero)} ${f.detalle ? '· <i>' + esc(f.detalle).substring(0,30) + '...</i>' : ''}</div>
-            <div class="muted" style="font-size:11px;margin-top:2px;">Emisión ARCA: <b>${fmtDate(f.fechaEmision)}</b> | Vencimiento: <b>${fmtDate(f.fechaVenc)}</b></div>
-          </div>
-          <div class="cheque-date"><div class="amount green">${money(f.total)}</div><div class="muted">IVA 21%: ${money(f.total - (f.total/1.21))}</div></div>
+      const st = effectiveStatus(c);
+      const content = document.getElementById("detailContent");
+      content.innerHTML = `
+        <div class="detail-row"><span>Tipo de Operación:</span><b>${c.tipoOp === 'cobrar' ? '📥 A Cobrar' : '📤 Emitido (A Pagar)'}</b></div>
+        <div class="detail-row"><span>Librador / Beneficiario:</span><b>${esc(c.beneficiario)}</b></div>
+        <div class="detail-row"><span>Banco:</span><b>${esc(c.banco)}</b></div>
+        <div class="detail-row"><span>Número de Cheque:</span><b>${esc(c.numero)}</b></div>
+        <div class="detail-row"><span>Fecha de Vencimiento:</span><b>${fmtDate(c.fecha)}</b></div>
+        <div class="detail-row"><span>Importe:</span><b>${money(c.importe)}</b></div>
+        <div class="detail-row"><span>Estado Actual:</span><span class="status ${st}">${st === 'paid' ? 'Liquidado' : st === 'expired' ? 'Vencido' : 'Pendiente'}</span></div>
+        <div class="detail-row"><span>Observaciones:</span><b>${esc(c.obs) || 'Sin observaciones'}</b></div>
+        <div class="form-actions" style="margin-top:20px">
+          <button class="btn" style="color:var(--red);border-color:var(--red)" onclick="deleteCheque(${c.id})">Eliminar</button>
+          ${c.status !== 'paid' ? `<button class="btn btn-purple" onclick="markAsPaid(${c.id})">Marcar como ${c.tipoOp === 'cobrar' ? 'Cobrado' : 'Pagado'}</button>` : ''}
         </div>
-      `).join("") || '<div class="card empty">No hay facturas registradas.</div>';
+      `;
+      document.getElementById("detailModal").classList.remove("hidden");
     }
 
-    if(localStorage.getItem("chekcontrol_logged")==="1"){
+    function closeModal(id){
+      document.getElementById(id).classList.add("hidden");
+    }
+
+    function markAsPaid(id){
+      const c = window.cheques.find(x => x.id === id);
+      if(c){
+        c.status = "paid";
+        window.saveStore();
+        closeModal("detailModal");
+      }
+    }
+
+    function deleteCheque(id){
+      if(confirm("¿Estás seguro de que deseas eliminar este cheque?")){
+        window.cheques = window.cheques.filter(x => x.id !== id);
+        window.saveStore();
+        closeModal("detailModal");
+      }
+    }
+
+    // Inicialización al cargar la sesión
+    if(localStorage.getItem("chekcontrol_logged") === "1"){
       document.getElementById("login").classList.add("hidden");
       document.getElementById("app").classList.remove("hidden");
-      render();
     }
   </script>
 </body>
